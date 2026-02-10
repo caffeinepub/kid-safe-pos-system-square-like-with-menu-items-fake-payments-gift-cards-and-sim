@@ -8,7 +8,9 @@ export function useMenu() {
   return useQuery<MenuItem[]>({
     queryKey: ['menu'],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) {
+        throw new Error('Backend actor not initialized. Please refresh the page.');
+      }
       return actor.getMenu();
     },
     enabled: !!actor && !isFetching,
@@ -29,7 +31,9 @@ export function useAddMenuItem() {
       price: number;
       category: string | null;
     }) => {
-      if (!actor) throw new Error('Actor not initialized');
+      if (!actor) {
+        throw new Error('Backend actor not initialized. Please refresh the page.');
+      }
       await actor.addMenuItem(name, price, category);
     },
     onSuccess: () => {
@@ -54,7 +58,9 @@ export function useEditMenuItem() {
       price: number;
       category: string | null;
     }) => {
-      if (!actor) throw new Error('Actor not initialized');
+      if (!actor) {
+        throw new Error('Backend actor not initialized. Please refresh the page.');
+      }
       await actor.editMenuItem(BigInt(index), name, price, category);
     },
     onSuccess: () => {
@@ -69,7 +75,9 @@ export function useRemoveMenuItem() {
 
   return useMutation({
     mutationFn: async (index: number) => {
-      if (!actor) throw new Error('Actor not initialized');
+      if (!actor) {
+        throw new Error('Backend actor not initialized. Please refresh the page.');
+      }
       await actor.removeMenuItem(BigInt(index));
     },
     onSuccess: () => {

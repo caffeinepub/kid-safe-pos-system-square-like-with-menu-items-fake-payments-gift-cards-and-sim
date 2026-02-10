@@ -1,4 +1,3 @@
-import { SiFacebook, SiX, SiInstagram } from 'react-icons/si';
 import { Heart } from 'lucide-react';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

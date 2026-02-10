@@ -1,293 +1,51 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-10T13:24:39.148Z",
+  "generatedAt": "2026-02-10T13:35:12.852Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 11,
-    "implemented": 10,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Create a POS terminal experience where the user can click/tap menu items to add them to a cart, adjust quantities, remove items, and see subtotal/total update immediately.",
+        "id": "REQ-12",
+        "summary": "Resolve the deployment/publish failure so the existing Version 1 POS app can be built and deployed successfully, producing a working shareable URL that loads the app UI and can make backend calls.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/features/pos/POSScreen.tsx",
-          "frontend/src/features/pos/cartTypes.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/features/pos/POSScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-10",
-        "summary": "Add basic safeguards and UX: prevent negative prices, enforce numeric price inputs, confirm before deleting menu items, and show user-friendly error states for failed backend calls.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/menu/MenuItemForm.tsx",
-          "frontend/src/features/menu/MenuManagementScreen.tsx",
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/components/common/ErrorState.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/menu/MenuItemForm.tsx",
-          "frontend/src/features/menu/MenuManagementScreen.tsx",
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/components/common/ErrorState.tsx"
-        ]
-      },
-      {
-        "id": "REQ-11",
-        "summary": "Generate and include required static images for branding and empty states, and render them from frontend static assets (do not serve generated images from the backend).",
-        "status": "implemented",
-        "plannedFiles": [
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/index.html",
           "frontend/public/assets/generated/pos-logo.dim_512x512.png",
           "frontend/public/assets/generated/empty-cart.dim_1200x800.png",
           "frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/features/pos/POSScreen.tsx",
-          "frontend/src/features/giftcards/GiftCardsScreen.tsx"
+          "frontend/src/hooks/useMenu.ts",
+          "frontend/src/hooks/useActor.ts"
         ],
         "matchedFiles": [
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/index.html",
           "frontend/public/assets/generated/pos-logo.dim_512x512.png",
           "frontend/public/assets/generated/empty-cart.dim_1200x800.png",
           "frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/features/pos/POSScreen.tsx",
-          "frontend/src/features/giftcards/GiftCardsScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Implement menu management so users can add, edit, and remove menu items (at minimum: name, price, optional color/category), and persist the menu so it remains available after refresh.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/menu/MenuManagementScreen.tsx",
-          "frontend/src/features/menu/MenuItemForm.tsx",
-          "frontend/src/hooks/useMenu.ts",
-          "frontend/src/features/pos/POSScreen.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/menu/MenuManagementScreen.tsx",
-          "frontend/src/features/menu/MenuItemForm.tsx",
-          "frontend/src/hooks/useMenu.ts",
-          "frontend/src/features/pos/POSScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Add a checkout flow that completes a sale using fake money only (no real currency): select payment method (Fake Cash, Gift Card, Online Credit Card), show a confirmation step, and finalize the transaction.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/hooks/useCompleteTransaction.ts",
-          "frontend/src/features/pos/POSScreen.tsx",
-          "frontend/src/features/common/SimulatedMoneyNotice.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/hooks/useCompleteTransaction.ts",
-          "frontend/src/features/pos/POSScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Store completed transactions in the backend with enough detail to display receipts (line items, quantities, prices, totals, timestamp, payment method, and any gift card reference when used).",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Implement gift cards: allow issuing a gift card with a code/ID and starting balance (fake money), viewing gift card details/balance, and using a gift card to pay (with balance deduction and rejection if insufficient).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/giftcards/GiftCardsScreen.tsx",
-          "frontend/src/hooks/useGiftCards.ts",
-          "frontend/src/features/checkout/CheckoutDialog.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/giftcards/GiftCardsScreen.tsx",
-          "frontend/src/hooks/useGiftCards.ts",
-          "frontend/src/features/checkout/CheckoutDialog.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Implement simulated online credit card payments: collect non-sensitive fake card fields (e.g., name, card number, expiry, CVC), perform basic client-side validation, and record the payment method as 'Online Credit Card (Simulated)' without integrating any real payment processor.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/checkout/SimulatedCardForm.tsx",
-          "frontend/src/features/checkout/CheckoutDialog.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/checkout/SimulatedCardForm.tsx",
-          "frontend/src/features/checkout/CheckoutDialog.tsx"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Add receipts: after completing a sale, show a receipt view with store name placeholder, date/time, line items, totals, and payment method; support printing via the browser print dialog.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/features/receipts/ReceiptScreen.tsx",
-          "frontend/src/features/transactions/TransactionsScreen.tsx",
-          "frontend/src/state/transactionsStore.ts",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/features/receipts/ReceiptScreen.tsx",
-          "frontend/src/features/transactions/TransactionsScreen.tsx",
-          "frontend/src/state/transactionsStore.ts",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Create a simple navigation layout with separate screens/sections for: POS Terminal, Menu Management, Gift Cards, and Transactions/Receipts.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/App.tsx",
-          "frontend/package.json"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Apply a cohesive, kid-safe visual theme across the app (consistent colors, typography, spacing, and component styling) with a distinct style appropriate for a playful fake-money POS (avoid blue/purple color schemes).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/layout/AppLayout.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/layout/AppLayout.tsx"
+          "frontend/src/hooks/useMenu.ts"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
-    "build-template/Dockerfile",
-    "build-template/LICENSE",
     "build-template/README.md",
-    "build-template/deploy.sh",
-    "build-template/icp.yaml",
-    "build-template/package.json",
-    "build-template/pnpm-lock.yaml",
-    "build-template/pnpm-workspace.yaml",
-    "build-template/scripts/prune-unused-images.js",
-    "build-template/scripts/resize-images.js",
-    "build-template/src/backend/canister.yaml",
-    "build-template/src/backend/system-idl/aaaaa-aa.did",
-    "build-template/src/frontend/canister.yaml",
-    "build-template/src/frontend/components.json",
-    "build-template/src/frontend/env.json",
-    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
-    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
-    "build-template/src/frontend/eslint.config.js",
-    "build-template/src/frontend/package.json",
-    "build-template/src/frontend/postcss.config.js",
-    "build-template/src/frontend/src/components/ui/accordion.tsx",
-    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
-    "build-template/src/frontend/src/components/ui/alert.tsx",
-    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
-    "build-template/src/frontend/src/components/ui/avatar.tsx",
-    "build-template/src/frontend/src/components/ui/badge.tsx",
-    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
-    "build-template/src/frontend/src/components/ui/button.tsx",
-    "build-template/src/frontend/src/components/ui/calendar.tsx",
-    "build-template/src/frontend/src/components/ui/card.tsx",
-    "build-template/src/frontend/src/components/ui/carousel.tsx",
-    "build-template/src/frontend/src/components/ui/chart.tsx",
-    "build-template/src/frontend/src/components/ui/checkbox.tsx",
-    "build-template/src/frontend/src/components/ui/collapsible.tsx",
-    "build-template/src/frontend/src/components/ui/command.tsx",
-    "build-template/src/frontend/src/components/ui/context-menu.tsx",
-    "build-template/src/frontend/src/components/ui/dialog.tsx",
-    "build-template/src/frontend/src/components/ui/drawer.tsx",
-    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
-    "build-template/src/frontend/src/components/ui/form.tsx",
-    "build-template/src/frontend/src/components/ui/hover-card.tsx",
-    "build-template/src/frontend/src/components/ui/input-otp.tsx",
-    "build-template/src/frontend/src/components/ui/input.tsx",
-    "build-template/src/frontend/src/components/ui/label.tsx",
-    "build-template/src/frontend/src/components/ui/menubar.tsx",
-    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
-    "build-template/src/frontend/src/components/ui/pagination.tsx",
-    "build-template/src/frontend/src/components/ui/popover.tsx",
-    "build-template/src/frontend/src/components/ui/progress.tsx",
-    "build-template/src/frontend/src/components/ui/radio-group.tsx",
-    "build-template/src/frontend/src/components/ui/resizable.tsx",
-    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
-    "build-template/src/frontend/src/components/ui/select.tsx",
-    "build-template/src/frontend/src/components/ui/separator.tsx",
-    "build-template/src/frontend/src/components/ui/sheet.tsx",
-    "build-template/src/frontend/src/components/ui/sidebar.tsx",
-    "build-template/src/frontend/src/components/ui/skeleton.tsx",
-    "build-template/src/frontend/src/components/ui/slider.tsx",
-    "build-template/src/frontend/src/components/ui/sonner.tsx",
-    "build-template/src/frontend/src/components/ui/switch.tsx",
-    "build-template/src/frontend/src/components/ui/table.tsx",
-    "build-template/src/frontend/src/components/ui/tabs.tsx",
-    "build-template/src/frontend/src/components/ui/textarea.tsx",
-    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
-    "build-template/src/frontend/src/components/ui/toggle.tsx",
-    "build-template/src/frontend/src/components/ui/tooltip.tsx",
-    "build-template/src/frontend/src/hooks/use-mobile.tsx",
-    "build-template/src/frontend/src/lib/utils.ts",
-    "build-template/src/frontend/tsconfig.json",
-    "build-template/src/frontend/vite.config.js",
-    "build-template/tsconfig.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.css",
     "frontend/index.html",
     "frontend/public/assets/generated/empty-cart.dim_1200x800.png",
     "frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png",
     "frontend/public/assets/generated/pos-logo.dim_512x512.png",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/common/ErrorState.tsx",
     "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/config.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/features/checkout/CheckoutDialog.tsx",
-    "frontend/src/features/checkout/SimulatedCardForm.tsx",
-    "frontend/src/features/giftcards/GiftCardsScreen.tsx",
-    "frontend/src/features/menu/MenuItemForm.tsx",
-    "frontend/src/features/menu/MenuManagementScreen.tsx",
-    "frontend/src/features/pos/POSScreen.tsx",
-    "frontend/src/features/receipts/ReceiptScreen.tsx",
-    "frontend/src/features/transactions/TransactionsScreen.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useCompleteTransaction.ts",
-    "frontend/src/hooks/useGiftCards.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
     "frontend/src/hooks/useMenu.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/state/transactionsStore.ts",
-    "frontend/src/ui-summary.json",
-    "frontend/src/utils/StorageClient.ts",
-    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

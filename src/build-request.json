@@ -1,213 +1,42 @@
 {
   "kind": "build_request",
-  "title": "Kid-safe POS system (Square-like) with menu items, fake payments, gift cards, and simulated online credit cards",
-  "priority": "normal",
+  "title": "Publish a working Version 1 draft and provide a shareable URL",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Create a POS terminal experience where the user can click/tap menu items to add them to a cart, adjust quantities, remove items, and see subtotal/total update immediately.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Make me a POS system like square where you can add items to your menu and just click on them"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A grid/list of menu items is displayed with name and price.",
-        "Clicking an item adds it to the current cart.",
-        "Cart supports increment/decrement quantity and remove line item.",
-        "Totals update immediately and are clearly visible."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Implement menu management so users can add, edit, and remove menu items (at minimum: name, price, optional color/category), and persist the menu so it remains available after refresh.",
+      "id": "REQ-12",
+      "text": "Resolve the deployment/publish failure so the existing Version 1 POS app can be built and deployed successfully, producing a working shareable URL that loads the app UI and can make backend calls.",
       "target": "both",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "add items to your menu"
+          "Make me a draft",
+          "Give me a link to version one",
+          "Your Version 1 link did not publish, so there’s no URL available yet.",
+          "Deployment error"
         ]
       },
       "acceptanceCriteria": [
-        "User can create a new menu item with at least name and price.",
-        "User can edit an existing item and changes appear in the POS terminal item grid.",
-        "User can delete an item and it no longer appears in the POS terminal item grid.",
-        "Menu data persists (stored in the Motoko canister)."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Add a checkout flow that completes a sale using fake money only (no real currency): select payment method (Fake Cash, Gift Card, Online Credit Card), show a confirmation step, and finalize the transaction.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "make this with fake money"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Checkout cannot be completed with an empty cart.",
-        "User can choose one of: Fake Cash, Gift Card, Online Credit Card.",
-        "Completing checkout clears the cart and records a transaction.",
-        "UI text clearly indicates this app uses fake money and simulated payments."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Store completed transactions in the backend with enough detail to display receipts (line items, quantities, prices, totals, timestamp, payment method, and any gift card reference when used).",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "make this with fake money And add gift cards, and online credit cards"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend exposes methods to create a transaction from the current cart and selected payment method.",
-        "Transactions include: items snapshot (name, unit price, qty), total, timestamp, and payment method.",
-        "Frontend can query and display a list of past transactions."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Implement gift cards: allow issuing a gift card with a code/ID and starting balance (fake money), viewing gift card details/balance, and using a gift card to pay (with balance deduction and rejection if insufficient).",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "add gift cards"
-        ]
-      },
-      "acceptanceCriteria": [
-        "User can create (issue) a gift card with a generated code/ID and an initial balance.",
-        "User can look up a gift card by code/ID and see current balance.",
-        "At checkout, selecting Gift Card requires entering/selecting a gift card code/ID.",
-        "If gift card balance is insufficient, checkout is blocked with a clear error.",
-        "If sufficient, balance is deducted and transaction records the gift card code/ID used."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Implement simulated online credit card payments: collect non-sensitive fake card fields (e.g., name, card number, expiry, CVC), perform basic client-side validation, and record the payment method as 'Online Credit Card (Simulated)' without integrating any real payment processor.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "online credit cards"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Checkout supports 'Online Credit Card' as a selectable payment method.",
-        "Form requires cardholder name, card number, expiry, and CVC and validates basic format (e.g., lengths).",
-        "No real payment API calls are made; the payment is always simulated.",
-        "Receipt/transaction displays payment method as simulated."
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Add receipts: after completing a sale, show a receipt view with store name placeholder, date/time, line items, totals, and payment method; support printing via the browser print dialog.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "POS system like square"
-        ]
-      },
-      "acceptanceCriteria": [
-        "After a sale, the app navigates to or displays a receipt view for that transaction.",
-        "Receipt includes: timestamp, item lines (name, qty, unit price, line total), subtotal/total, and payment method.",
-        "A 'Print Receipt' action opens the browser print dialog.",
-        "A user can reopen receipts from the transaction history list."
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Create a simple navigation layout with separate screens/sections for: POS Terminal, Menu Management, Gift Cards, and Transactions/Receipts.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "User can navigate between POS Terminal, Menu, Gift Cards, and Transactions.",
-        "Navigation remains usable on desktop and mobile widths.",
-        "Each section has a clear title and primary actions."
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Apply a cohesive, kid-safe visual theme across the app (consistent colors, typography, spacing, and component styling) with a distinct style appropriate for a playful fake-money POS (avoid blue/purple color schemes).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Theme is applied consistently across all screens (navigation, buttons, cards, forms).",
-        "Color palette is not predominantly blue/purple.",
-        "UI clearly reads as playful/kid-safe (e.g., warm colors, rounded corners, friendly typography)."
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "text": "Add basic safeguards and UX: prevent negative prices, enforce numeric price inputs, confirm before deleting menu items, and show user-friendly error states for failed backend calls.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Menu item price cannot be negative and must be a valid number.",
-        "Deleting a menu item requires confirmation.",
-        "Network/backend errors show a clear message with a retry option where appropriate.",
-        "Checkout errors (e.g., missing gift card code, insufficient balance) are clearly displayed."
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "text": "Generate and include required static images for branding and empty states, and render them from frontend static assets (do not serve generated images from the backend).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Generated images exist under frontend/public/assets/generated.",
-        "App uses the generated images in the UI (e.g., header/landing/empty states) without routing through the backend."
+        "A fresh build completes without errors for both frontend and backend.",
+        "Deployment/publish completes successfully and results in a shareable URL.",
+        "Opening the URL loads the app without a blank screen or console-fatal runtime error.",
+        "Core flows work from the deployed URL: viewing POS tab, viewing Menu tab, and at least one backend query/mutation succeeds (e.g., fetching menu or adding a menu item)."
       ]
     }
   ],
   "constraints": [
-    "All money and payment flows must be fake/simulated; do not integrate real payment processors or real card charging.",
-    "Backend must remain a single Motoko actor (all logic in backend/main.mo).",
-    "Do not edit files in frontend immutablePaths (compose UI components instead of modifying them).",
-    "Use English for all user-facing text."
+    "Backend must remain a single Motoko actor in backend/main.mo (no additional backend services).",
+    "Do not edit frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "User-facing text must be in English.",
+    "Do not add real-money payment processing; payments must remain simulated/fake."
   ],
   "nonGoals": [
-    "Real credit card processing (Stripe/PayPal) or any production payment compliance.",
-    "Integration with POS hardware (barcode scanners, receipt printers, cash drawers).",
-    "Tax calculation/compliance features (VAT/sales tax rules, fiscalization).",
-    "Multi-merchant accounts, staff roles/permissions, or advanced inventory management."
+    "Implementing third-party authentication providers beyond Internet Identity.",
+    "Adding external databases or non-IC backend services.",
+    "Adding real-time features (WebSockets/push notifications/chat).",
+    "Integrating real payment processors (e.g., Stripe) for actual charges."
   ],
   "imageRequirements": {
     "required": [
@@ -216,15 +45,5 @@
       "Gift card illustration (rounded card with pattern, warm palette) (gift-card-illustration.dim_1200x800.png)"
     ],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }
