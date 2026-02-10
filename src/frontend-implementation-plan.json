@@ -1,0 +1,304 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Kid-safe fake-money POS (Square-like) with menu, checkout, gift cards, and receipts",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Build POS terminal UI with tappable menu items, cart editing, and live subtotal/total updates.",
+      "acceptanceCriteria": [
+        "A grid/list of menu items is displayed with name and price.",
+        "Clicking an item adds it to the current cart.",
+        "Cart supports increment/decrement quantity and remove line item.",
+        "Totals update immediately and are clearly visible."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the main POS shell that renders the POS Terminal screen and holds cart state/derived totals (subtotal/total) with immediate UI updates; use shadcn-ui primitives for consistent buttons/cards (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/pos/POSScreen.tsx",
+          "operation": "create",
+          "description": "Implement the POS Terminal screen with a tappable menu item grid and a cart panel; ensure cart line items can be incremented/decremented/removed and totals recalc instantly; use shadcn-ui components for layout and controls (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/pos/cartTypes.ts",
+          "operation": "create",
+          "description": "Add shared cart types/helpers (e.g., cart line model, total calculation helpers) to keep POS logic consistent across checkout and receipts."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add menu management UI (add/edit/delete) and load/persist menu through the backend so it survives refresh.",
+      "acceptanceCriteria": [
+        "User can create a new menu item with at least name and price.",
+        "User can edit an existing item and changes appear in the POS terminal item grid.",
+        "User can delete an item and it no longer appears in the POS terminal item grid.",
+        "Menu data persists (stored in the Motoko canister)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/menu/MenuManagementScreen.tsx",
+          "operation": "create",
+          "description": "Create the Menu Management screen with a list/table of items and add/edit forms (name, price, optional category/color UI choice); wire actions to backend calls via the core-infrastructure backend connection and show optimistic UI/refresh on success; use shadcn-ui form controls and dialogs (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/menu/MenuItemForm.tsx",
+          "operation": "create",
+          "description": "Create a reusable menu item form component for create/edit flows with numeric price input handling and validation; use shadcn-ui Input/Button components (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/hooks/useMenu.ts",
+          "operation": "create",
+          "description": "Implement a React Query hook to fetch/refresh the menu from the backend (getMenu / getMenuByCategory) and provide mutations for add/edit/remove; include consistent error handling and retry triggers."
+        },
+        {
+          "path": "frontend/src/features/pos/POSScreen.tsx",
+          "operation": "modify",
+          "description": "Update POS Terminal menu grid data source to use the shared menu hook so updates from Menu Management reflect immediately after changes; use empty/loading/error states."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Implement checkout flow for fake payments (Fake Cash, Gift Card, Online Credit Card) with confirmation, sale completion, and transaction recording in UI.",
+      "acceptanceCriteria": [
+        "Checkout cannot be completed with an empty cart.",
+        "User can choose one of: Fake Cash, Gift Card, Online Credit Card.",
+        "Completing checkout clears the cart and records a transaction.",
+        "UI text clearly indicates this app uses fake money and simulated payments."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
+          "operation": "create",
+          "description": "Create a checkout modal/dialog that enforces non-empty cart, lets the user pick payment method, shows a confirmation step, and on confirm triggers simulated completion; prominently label all money as fake/simulated; use shadcn-ui Dialog/Radio/Buttons (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/hooks/useCompleteTransaction.ts",
+          "operation": "create",
+          "description": "Add a mutation hook that invokes the backend transaction completion capability (completeTransaction) and returns UI-friendly success/error results; include user-friendly error messages and a retry function."
+        },
+        {
+          "path": "frontend/src/features/pos/POSScreen.tsx",
+          "operation": "modify",
+          "description": "Wire the Checkout action from the cart panel to open the checkout dialog; on successful checkout clear the cart and navigate to the receipt view for the newly created (client-tracked) transaction."
+        },
+        {
+          "path": "frontend/src/features/common/SimulatedMoneyNotice.tsx",
+          "operation": "create",
+          "description": "Add a small reusable notice/banner component indicating all money and payments are fake/simulated; use shadcn-ui Alert/Card styling (verify the component's usage instructions before implementing)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement gift card issuing/lookup UI and allow paying by gift card during checkout with validation and clear errors.",
+      "acceptanceCriteria": [
+        "User can create (issue) a gift card with a generated code/ID and an initial balance.",
+        "User can look up a gift card by code/ID and see current balance.",
+        "At checkout, selecting Gift Card requires entering/selecting a gift card code/ID.",
+        "If gift card balance is insufficient, checkout is blocked with a clear error.",
+        "If sufficient, balance is deducted and transaction records the gift card code/ID used."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/giftcards/GiftCardsScreen.tsx",
+          "operation": "create",
+          "description": "Create the Gift Cards screen with (1) issue gift card form (code generation UI + initial balance) and (2) lookup by code to display current balance; call backend gift card capabilities and show loading/error states; use shadcn-ui form components (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/hooks/useGiftCards.ts",
+          "operation": "create",
+          "description": "Create React Query hooks/mutations for issuing, looking up, and using gift cards (issueGiftCard/getGiftCard/useGiftCard), with consistent error mapping for insufficient balance and not-found cases."
+        },
+        {
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
+          "operation": "modify",
+          "description": "Add Gift Card payment option that requires entering/selecting a gift card code; validate required fields before confirmation; on confirm, call useGiftCard to deduct balance and block completion with a clear error if insufficient."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add simulated online credit card form with basic client-side validation and ensure no real payment integration occurs.",
+      "acceptanceCriteria": [
+        "Checkout supports 'Online Credit Card' as a selectable payment method.",
+        "Form requires cardholder name, card number, expiry, and CVC and validates basic format (e.g., lengths).",
+        "No real payment API calls are made; the payment is always simulated.",
+        "Receipt/transaction displays payment method as simulated."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/checkout/SimulatedCardForm.tsx",
+          "operation": "create",
+          "description": "Create a simulated card details form (cardholder name, fake card number, expiry, CVC) with basic client-side validation and helper text stating it is simulated; use shadcn-ui Input and form styling (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
+          "operation": "modify",
+          "description": "Wire the 'Online Credit Card' payment method to render SimulatedCardForm, enforce validation before enabling confirmation, and record the method as 'Online Credit Card (Simulated)' in the receipt data."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add receipt view after sale completion with print support and ability to reopen from transaction history.",
+      "acceptanceCriteria": [
+        "After a sale, the app navigates to or displays a receipt view for that transaction.",
+        "Receipt includes: timestamp, item lines (name, qty, unit price, line total), subtotal/total, and payment method.",
+        "A 'Print Receipt' action opens the browser print dialog.",
+        "A user can reopen receipts from the transaction history list."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/receipts/ReceiptScreen.tsx",
+          "operation": "create",
+          "description": "Create a receipt view showing store name placeholder, timestamp, line items, totals, and payment method; include a Print Receipt action that triggers the browser print dialog; use shadcn-ui layout primitives (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/transactions/TransactionsScreen.tsx",
+          "operation": "create",
+          "description": "Create a transactions/receipts list screen that shows past transactions and allows opening a receipt; initially back by a frontend store (and later can be wired to backend history capability) with clear empty/error states; use shadcn-ui list/cards (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/state/transactionsStore.ts",
+          "operation": "create",
+          "description": "Implement a small client-side transaction store to track completed transactions for receipt reopening (e.g., in-memory + localStorage) while backend history support is being integrated elsewhere; include safe parsing and versioning."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire navigation after successful checkout to the Receipt screen (passing/looking up the completed transaction in the client store) and add routing/section switching to open receipts from the Transactions list."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Create a simple navigation layout with sections for POS Terminal, Menu Management, Gift Cards, and Transactions/Receipts.",
+      "acceptanceCriteria": [
+        "User can navigate between POS Terminal, Menu, Gift Cards, and Transactions.",
+        "Navigation remains usable on desktop and mobile widths.",
+        "Each section has a clear title and primary actions."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "create",
+          "description": "Create a responsive app layout with a top bar (logo/title) and navigation tabs/links for POS, Menu, Gift Cards, and Transactions; use shadcn-ui navigation primitives where available (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Update the app to use AppLayout and render the required sections (POS Terminal, Menu Management, Gift Cards, Transactions/Receipts) via route-based or tab-based navigation; ensure no section is orphaned."
+        },
+        {
+          "path": "frontend/package.json",
+          "operation": "modify",
+          "description": "If not already present, add the minimal routing dependency used by App navigation (e.g., react-router-dom) and ensure build scripts remain intact."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Apply a cohesive kid-safe theme (warm palette, rounded friendly style; avoid blue/purple dominance) across the app.",
+      "acceptanceCriteria": [
+        "Theme is applied consistently across all screens (navigation, buttons, cards, forms).",
+        "Color palette is not predominantly blue/purple.",
+        "UI clearly reads as playful/kid-safe (e.g., warm colors, rounded corners, friendly typography)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Create global styles and theme CSS variables for a warm, playful palette (avoid blue/purple as primary), friendly typography, and rounded corners; ensure shadcn-ui tokens map to the new warm theme (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust Tailwind theme extensions only as needed to support the kid-safe warm palette and rounded styling via existing CSS variables/tokens; keep configuration cohesive with existing shadcn-ui setup (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Apply consistent spacing/typography and warm-themed surfaces to navigation/header using existing theme tokens; include a prominent 'fake money' cue in the header area."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Add UX safeguards: validate price inputs, confirm destructive actions, and show user-friendly error states and checkout errors.",
+      "acceptanceCriteria": [
+        "Menu item price cannot be negative and must be a valid number.",
+        "Deleting a menu item requires confirmation.",
+        "Network/backend errors show a clear message with a retry option where appropriate.",
+        "Checkout errors (e.g., missing gift card code, insufficient balance) are clearly displayed."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/menu/MenuItemForm.tsx",
+          "operation": "modify",
+          "description": "Enforce numeric price input with non-negative validation (block submit and show inline messages); ensure inputs are resilient to empty/invalid strings; use shadcn-ui form feedback patterns (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/menu/MenuManagementScreen.tsx",
+          "operation": "modify",
+          "description": "Add a confirmation dialog before deleting a menu item; show backend-call failure banners with a retry action for list reload and mutation failures; use shadcn-ui Dialog/Alert components (verify the component's usage instructions before implementing)."
+        },
+        {
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
+          "operation": "modify",
+          "description": "Add clear error rendering for checkout blocking conditions (empty cart, missing gift card code, insufficient balance, invalid simulated card fields) and ensure errors are displayed in plain English with corrective guidance."
+        },
+        {
+          "path": "frontend/src/components/common/ErrorState.tsx",
+          "operation": "create",
+          "description": "Create a reusable error state component with message + optional retry callback for failed backend calls; style with shadcn-ui components (verify the component's usage instructions before implementing)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Include required static branding/empty-state images under frontend public assets and render them in the UI.",
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated.",
+        "App uses the generated images in the UI (e.g., header/landing/empty states) without routing through the backend."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/pos-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated playful cash register logo image at frontend/public/assets/generated/pos-logo.dim_512x512.png and ensure it is referenced as a static frontend asset (not served via backend)."
+        },
+        {
+          "path": "frontend/public/assets/generated/empty-cart.dim_1200x800.png",
+          "operation": "create",
+          "description": "Add the generated empty-cart illustration at frontend/public/assets/generated/empty-cart.dim_1200x800.png and use it for empty cart/empty transactions states as a static frontend asset."
+        },
+        {
+          "path": "frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png",
+          "operation": "create",
+          "description": "Add the generated gift card illustration at frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png and use it on the Gift Cards screen as a static frontend asset."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Render the logo image from frontend/public/assets/generated/pos-logo.dim_512x512.png in the header area; keep layout responsive and kid-friendly."
+        },
+        {
+          "path": "frontend/src/features/pos/POSScreen.tsx",
+          "operation": "modify",
+          "description": "Display the empty cart illustration from frontend/public/assets/generated/empty-cart.dim_1200x800.png when the cart is empty, along with a friendly prompt."
+        },
+        {
+          "path": "frontend/src/features/giftcards/GiftCardsScreen.tsx",
+          "operation": "modify",
+          "description": "Display the gift card illustration from frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png in the Gift Cards section to reinforce branding and provide an empty-state visual."
+        }
+      ]
+    }
+  ]
+}

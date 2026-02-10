@@ -1,0 +1,19 @@
+{
+  "frontend/src/index.css": "Global styles with warm coral/peach/yellow OKLCH color palette for kid-safe POS theme, plus print-specific styles for receipts.",
+  "frontend/src/App.tsx": "Main app component managing tab navigation between POS, Menu, Gift Cards, Transactions, and Receipt screens with checkout flow coordination.",
+  "frontend/src/components/layout/AppLayout.tsx": "App layout wrapper with header (logo, fake money badge), main content area, and footer with attribution.",
+  "frontend/src/features/pos/POSScreen.tsx": "POS terminal screen with tappable menu item grid, shopping cart with quantity controls, and checkout button.",
+  "frontend/src/features/menu/MenuManagementScreen.tsx": "Menu management interface with table view of items and add/edit/delete actions with confirmation dialogs.",
+  "frontend/src/features/menu/MenuItemForm.tsx": "Reusable dialog form for creating and editing menu items with validation for name, price, and optional category.",
+  "frontend/src/features/checkout/CheckoutDialog.tsx": "Checkout dialog supporting three payment methods (fake cash, gift card, online credit card) with validation and error handling.",
+  "frontend/src/features/checkout/SimulatedCardForm.tsx": "Simulated credit card form with formatted inputs for cardholder name, card number, expiry, and CVC with clear fake payment notice.",
+  "frontend/src/features/giftcards/GiftCardsScreen.tsx": "Gift card management screen with issue card form (code generation, balance) and balance lookup functionality.",
+  "frontend/src/features/transactions/TransactionsScreen.tsx": "Transaction history table displaying past sales with date, items, payment method, total, and view receipt action.",
+  "frontend/src/features/receipts/ReceiptScreen.tsx": "Receipt view displaying transaction details with line items, totals, payment method, and print functionality.",
+  "frontend/src/hooks/useMenu.ts": "React Query hooks for menu operations (fetch, add, edit, remove) with automatic cache invalidation.",
+  "frontend/src/hooks/useCompleteTransaction.ts": "Mutation hook for completing transactions, storing in backend and local transaction store, returning receipt ID.",
+  "frontend/src/hooks/useGiftCards.ts": "Mutation hooks for gift card operations (issue, lookup, payment) with backend integration.",
+  "frontend/src/state/transactionsStore.ts": "Zustand store with localStorage persistence for client-side transaction history and receipt data.",
+  "frontend/src/components/common/ErrorState.tsx": "Reusable error state component with icon, message, and optional retry button.",
+  "frontend/tailwind.config.js": "Tailwind configuration with Inter font family and extended theme tokens matching the warm color palette."
+}

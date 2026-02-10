@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Build a kid-safe POS app like Square: manage a menu of items, ring up sales by tapping items, and process payments using fake money, including gift cards and online credit card payments, with receipts.",
+  "architectural_notes": [
+    "Kid-safe POS; no real-money processing (use fake/simulated payments)."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Playful cash register icon/mark in warm colors (pos-logo.dim_512x512.png)\n- Cart/checkout empty-state illustration with simple shapes, warm palette (empty-cart.dim_1200x800.png)\n- Gift card illustration (rounded card with pattern, warm palette) (gift-card-illustration.dim_1200x800.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-a-pos-terminal-experience-where-the-user-can-click-tap-menu-items-to-add-them-to-a-cart-adjust-quantities-remove-items-and-see-subtotal-total-update-immediately",
+      "title": "Create a POS terminal experience where the user can click/tap menu items to add them to a cart, adjust quantities, remove items, and see subtotal/total update immediately.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-menu-management-so-users-can-add-edit-and-remove-menu-items-at-minimum-name-price-optional-color-category-and-persist-the-menu-so-it-remains-available-after-refresh",
+      "title": "Implement menu management so users can add, edit, and remove menu items (at minimum: name, price, optional color/category), and persist the menu so it remains available after refresh.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-checkout-flow-that-completes-a-sale-using-fake-money-only-no-real-currency-select-payment-method-fake-cash-gift-card-online-credit-card-show-a-confirmation-step-and-finalize-the-transaction",
+      "title": "Add a checkout flow that completes a sale using fake money only (no real currency): select payment method (Fake Cash, Gift Card, Online Credit Card), show a confirmation step, and finalize the transaction.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-gift-cards-allow-issuing-a-gift-card-with-a-code-id-and-starting-balance-fake-money-viewing-gift-card-details-balance-and-using-a-gift-card-to-pay-with-balance-deduction-and-rejection-if-insufficient",
+      "title": "Implement gift cards: allow issuing a gift card with a code/ID and starting balance (fake money), viewing gift card details/balance, and using a gift card to pay (with balance deduction and rejection if insufficient).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-simulated-online-credit-card-payments-collect-non-sensitive-fake-card-fields-e-g-name-card-number-expiry-cvc-perform-basic-client-side-validation-and-record-the-payment-method-as-online-credit-card-simulated-without-integrating-any-real-payment-processor",
+      "title": "Implement simulated online credit card payments: collect non-sensitive fake card fields (e.g., name, card number, expiry, CVC), perform basic client-side validation, and record the payment method as 'Online Credit Card (Simulated)' without integrating any real payment processor.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-receipts-after-completing-a-sale-show-a-receipt-view-with-store-name-placeholder-date-time-line-items-totals-and-payment-method-support-printing-via-the-browser-print-dialog",
+      "title": "Add receipts: after completing a sale, show a receipt view with store name placeholder, date/time, line items, totals, and payment method; support printing via the browser print dialog.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-simple-navigation-layout-with-separate-screens-sections-for-pos-terminal-menu-management-gift-cards-and-transactions-receipts",
+      "title": "Create a simple navigation layout with separate screens/sections for: POS Terminal, Menu Management, Gift Cards, and Transactions/Receipts.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-cohesive-kid-safe-visual-theme-across-the-app-consistent-colors-typography-spacing-and-component-styling-with-a-distinct-style-appropriate-for-a-playful-fake-money-pos-avoid-blue-purple-color-schemes",
+      "title": "Apply a cohesive, kid-safe visual theme across the app (consistent colors, typography, spacing, and component styling) with a distinct style appropriate for a playful fake-money POS (avoid blue/purple color schemes).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-basic-safeguards-and-ux-prevent-negative-prices-enforce-numeric-price-inputs-confirm-before-deleting-menu-items-and-show-user-friendly-error-states-for-failed-backend-calls",
+      "title": "Add basic safeguards and UX: prevent negative prices, enforce numeric price inputs, confirm before deleting menu items, and show user-friendly error states for failed backend calls.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-include-required-static-images-for-branding-and-empty-states-and-render-them-from-frontend-static-assets-do-not-serve-generated-images-from-the-backend",
+      "title": "Generate and include required static images for branding and empty states, and render them from frontend static assets (do not serve generated images from the backend).",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Menu management: add/edit/remove items for a POS menu",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Ring-up interface: tap/click menu items to add to cart and calculate totals",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Fake cash payment flow to complete transactions without real money",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Gift card support (issue/use gift cards as a payment method)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Online credit card payment simulation/support (non-real or sandbox)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Generate and display/print receipts for completed transactions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Store completed transactions in the backend with enough detail to display receipts (line items, quantities, prices, totals, timestamp, payment method, and any gift card reference when used).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Kid-safe POS system (Square-like) with menu items, fake payments, gift cards, and simulated online credit cards",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

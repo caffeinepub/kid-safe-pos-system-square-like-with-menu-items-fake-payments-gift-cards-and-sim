@@ -1,0 +1,111 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-10T13:24:39.145Z",
+  "summary": "Diff adds a frontend POS-style UI with tabs (POS/Menu/Gift Cards/History/Receipt), cart operations, checkout with fake cash/gift card/simulated card form, receipts with browser print, a warm kid-safe theme, and a Motoko backend actor with menu/transaction/gift-card primitives. However, several core persistence and transaction-detail requirements are not evidenced (especially backend-persisted menu/transactions and receipt data completeness), and some unrequested authentication/branding elements were introduced.",
+  "missing_requirements": [
+    {
+      "id": "REQ-2",
+      "requirement": "Persist the menu so it remains available after refresh (stored in the Motoko canister).",
+      "reason": "The backend shows `let menu = List.empty<MenuItem>();` with no evidence of `stable` storage or upgrade-safe persistence; frontend persistence is not shown either. Based on the diff summary alone, menu persistence across refresh is not demonstrated.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Backend must store completed transactions with enough detail for receipts and expose methods to query a list of past transactions.",
+      "reason": "Backend shows `transactions = List.empty<Transaction>()` and `completeTransaction(...)` adds a transaction, but there is no evidenced query method to fetch transaction history. Also, the frontend Transactions/Receipt views read from a local zustand store (`transactionsStore`) rather than querying backend history.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/features/transactions/TransactionsScreen.tsx",
+        "frontend/src/features/receipts/ReceiptScreen.tsx",
+        "frontend/src/state/transactionsStore.ts"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Transactions include line items with quantities and prices (items snapshot: name, unit price, qty), totals, timestamp, payment method, and any gift card reference when used.",
+      "reason": "Backend `Transaction` stores `items : [MenuItem]` where `MenuItem` has no quantity field, and `completeTransaction(items : [MenuItem], ...)` cannot capture quantities. Additionally, the frontend `useCompleteTransaction` maps cart items to backend `MenuItem` and drops `quantity`, so backend cannot store receipt-grade line item quantities.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useCompleteTransaction.ts"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Gift card payments must record the gift card code/ID used in the transaction record.",
+      "reason": "Frontend encodes the gift card code into a free-form `paymentMethodLabel = `Gift Card (${code})`` string, but backend `Transaction` schema has no dedicated gift card reference field and only stores `paymentMethod : Text`. The requirement calls out recording a gift card reference when used; a structured field is not evidenced.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/features/checkout/CheckoutDialog.tsx"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "requirement": "Include and use the required static gift card illustration asset (gift-card-illustration.dim_1200x800.png) from frontend static assets.",
+      "reason": "The diff shows usage of `pos-logo.dim_512x512.png` and `empty-cart.dim_1200x800.png`, but no evidence of `gift-card-illustration.dim_1200x800.png` being referenced in UI.",
+      "evidence": [
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/features/pos/POSScreen.tsx",
+        "frontend/src/features/transactions/TransactionsScreen.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Internet Identity authentication provider and actor recreation keyed by identity.",
+      "reason": "BuildRequest does not ask for authentication/login. Diff adds `useInternetIdentity`, `InternetIdentityProvider`, and logic to create actors with identity.",
+      "evidence": [
+        "frontend/src/hooks/useInternetIdentity.ts",
+        "frontend/src/hooks/useActor.ts",
+        "frontend/src/main.tsx"
+      ]
+    },
+    {
+      "description": "Caffeine.ai promotional footer link and social icon imports.",
+      "reason": "BuildRequest does not request external promotional links or social integrations. AppLayout includes a caffeine.ai referral link and imports social icons.",
+      "evidence": [
+        "frontend/src/components/layout/AppLayout.tsx"
+      ]
+    },
+    {
+      "description": "Local persisted transaction history stored in browser (zustand persist) instead of relying solely on backend storage.",
+      "reason": "While showing transaction history is requested, persisting transactions in localStorage is not requested and also risks diverging from the requirement that transactions be stored/queryable from the backend.",
+      "evidence": [
+        "frontend/src/state/transactionsStore.ts",
+        "frontend/src/hooks/useCompleteTransaction.ts",
+        "frontend/src/features/transactions/TransactionsScreen.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/common/ErrorState.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/features/checkout/CheckoutDialog.tsx",
+    "frontend/src/features/checkout/SimulatedCardForm.tsx",
+    "frontend/src/features/giftcards/GiftCardsScreen.tsx",
+    "frontend/src/features/menu/MenuItemForm.tsx",
+    "frontend/src/features/menu/MenuManagementScreen.tsx",
+    "frontend/src/features/pos/POSScreen.tsx",
+    "frontend/src/features/receipts/ReceiptScreen.tsx",
+    "frontend/src/features/transactions/TransactionsScreen.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useCompleteTransaction.ts",
+    "frontend/src/hooks/useGiftCards.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useMenu.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/state/transactionsStore.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}
