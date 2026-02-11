@@ -1,19 +1,32 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "Build a payment flow using custom credit cards with QR codes, where selecting the credit card payment option opens a QR code scanner to process the payment immediately after scanning.",
   "architectural_notes": [],
-  "known_issues": [
-    "Network deployment/publish is failing with a deployment error, preventing a Version 1 URL from being generated"
-  ],
-  "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Playful cash register icon/mark in warm colors (pos-logo.dim_512x512.png)\n- Cart/checkout empty-state illustration with simple shapes, warm palette (empty-cart.dim_1200x800.png)\n- Gift card illustration (rounded card with pattern, warm palette) (gift-card-illustration.dim_1200x800.png)",
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-resolve-the-deployment-publish-failure-so-the-existing-version-1-pos-app-can-be-built-and-deployed-successfully-producing-a-working-shareable-url-that-loads-the-app-ui-and-can-make-backend-calls",
-      "title": "Resolve the deployment/publish failure so the existing Version 1 POS app can be built and deployed successfully, producing a working shareable URL that loads the app UI and can make backend calls.",
+      "id": "feature-add-a-frontend-screen-to-create-and-manage-custom-credit-cards-including-displaying-each-card-s-qr-code-for-scanning",
+      "title": "Add a frontend screen to create and manage custom credit cards, including displaying each card’s QR code for scanning.",
       "reqIds": [
-        "REQ-12"
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-checkout-dialog-card-payment-option-so-that-selecting-using-the-credit-card-payment-method-opens-an-in-app-qr-code-scanner-when-a-valid-code-is-scanned-the-transaction-completes-immediately-and-a-receipt-is-shown",
+      "title": "Change the Checkout dialog card payment option so that selecting/using the credit card payment method opens an in-app QR code scanner; when a valid code is scanned, the transaction completes immediately and a receipt is shown.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-record-the-custom-credit-card-used-for-payment-on-the-receipt-e-g-include-the-card-name-identifier-in-the-payment-method-label",
+      "title": "Record the custom credit card used for payment on the receipt (e.g., include the card name/identifier in the payment method label).",
+      "reqIds": [
+        "REQ-4"
       ],
       "version": 1
     }
@@ -21,12 +34,20 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Generate a draft build (Version 1) and provide a working shareable link/URL",
+      "summary": "Implement custom credit cards with QR codes and a payment flow where pressing the credit card button launches a QR code scanner to scan and process payment",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add backend support for custom credit cards identified by a QR payload so the app can create cards and validate scanned QR codes during checkout.",
+      "reqIds": [
+        "REQ-1"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "Publish a working Version 1 draft and provide a shareable URL",
+  "projectName": "Add custom QR credit cards and QR scanner checkout flow",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

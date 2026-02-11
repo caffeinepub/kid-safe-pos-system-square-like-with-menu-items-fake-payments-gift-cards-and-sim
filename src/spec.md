@@ -1,11 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the deployment/publish failure so Version 1 of the POS app successfully builds and deploys, producing a working shareable URL.
+**Goal:** Add custom QR-based “credit cards” and a QR scanner-driven checkout flow that validates scanned tokens with the backend and records the chosen card on receipts.
 
 **Planned changes:**
-- Identify and resolve the current frontend and/or backend build errors preventing a successful deploy.
-- Ensure the deployed app loads without blank screen or fatal console/runtime errors.
-- Verify deployed core flows and backend connectivity: POS tab and Menu tab render, and at least one backend query/mutation works (e.g., fetch menu or add a menu item).
+- Backend: add CRUD for custom QR credit card records (display name + QR token/payload) and an endpoint to validate a scanned token and return matching card info.
+- Frontend: add a management screen to create/list/delete custom QR credit cards and render each card’s QR code.
+- Frontend: replace the existing checkout “credit card” payment UI with an in-app QR scanner flow, including a manual token entry fallback when camera/scan is unavailable.
+- Both: when completing a transaction via QR card, store and display a payment method label that includes the scanned card’s human-readable name/identifier on the receipt.
 
-**User-visible outcome:** A shareable URL is available that opens the Version 1 POS app, shows the POS and Menu tabs, and successfully performs at least one backend call from the deployed environment.
+**User-visible outcome:** Users can create QR credit cards in-app, scan a card’s QR code when paying by credit card (or manually enter the token), complete checkout immediately after validation, and see which QR card was used on the receipt.

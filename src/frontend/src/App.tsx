@@ -6,6 +6,7 @@ import MenuManagementScreen from './features/menu/MenuManagementScreen';
 import GiftCardsScreen from './features/giftcards/GiftCardsScreen';
 import TransactionsScreen from './features/transactions/TransactionsScreen';
 import ReceiptScreen from './features/receipts/ReceiptScreen';
+import CustomCreditCardsScreen from './features/custom-cards/CustomCreditCardsScreen';
 
 export type CartItem = {
   name: string;
@@ -36,9 +37,10 @@ function App() {
   return (
     <AppLayout>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 max-w-2xl mx-auto mb-6">
+        <TabsList className="grid w-full grid-cols-6 max-w-3xl mx-auto mb-6">
           <TabsTrigger value="pos">POS</TabsTrigger>
           <TabsTrigger value="menu">Menu</TabsTrigger>
+          <TabsTrigger value="cards">Cards</TabsTrigger>
           <TabsTrigger value="giftcards">Gift Cards</TabsTrigger>
           <TabsTrigger value="transactions">History</TabsTrigger>
           <TabsTrigger value="receipt" disabled={!currentReceiptId}>
@@ -52,6 +54,10 @@ function App() {
 
         <TabsContent value="menu" className="mt-0">
           <MenuManagementScreen />
+        </TabsContent>
+
+        <TabsContent value="cards" className="mt-0">
+          <CustomCreditCardsScreen />
         </TabsContent>
 
         <TabsContent value="giftcards" className="mt-0">

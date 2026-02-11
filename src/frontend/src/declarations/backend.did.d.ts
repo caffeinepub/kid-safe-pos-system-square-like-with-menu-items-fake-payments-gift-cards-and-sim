@@ -17,6 +17,7 @@ export interface MenuItem {
   'price' : number,
 }
 export interface _SERVICE {
+  'addCustomCreditCard' : ActorMethod<[string, string], undefined>,
   'addMenuItem' : ActorMethod<[string, number, [] | [string]], undefined>,
   'completeTransaction' : ActorMethod<
     [Array<MenuItem>, number, string],
@@ -32,6 +33,7 @@ export interface _SERVICE {
   'issueGiftCard' : ActorMethod<[string, number], undefined>,
   'removeMenuItem' : ActorMethod<[bigint], undefined>,
   'useGiftCard' : ActorMethod<[string, number], undefined>,
+  'validateCustomCreditCard' : ActorMethod<[string], string>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

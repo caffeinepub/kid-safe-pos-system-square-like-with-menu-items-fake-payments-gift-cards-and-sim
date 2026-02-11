@@ -1,52 +1,97 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix V1 POS frontend publish/build reliability and wire required generated assets",
+  "title": "Custom QR credit cards management + QR scanner checkout flow",
   "requirements": [
     {
-      "id": "REQ-12",
-      "summary": "Resolve frontend build/runtime issues that can prevent publish, and ensure deployed UI loads and can call the backend while wiring required generated assets into the UI.",
+      "id": "REQ-2",
+      "summary": "Add a Custom Credit Cards screen to create, list, show QR codes, and delete cards.",
       "acceptanceCriteria": [
-        "A fresh build completes without errors for both frontend and backend.",
-        "Deployment/publish completes successfully and results in a shareable URL.",
-        "Opening the URL loads the app without a blank screen or console-fatal runtime error.",
-        "Core flows work from the deployed URL: viewing POS tab, viewing Menu tab, and at least one backend query/mutation succeeds (e.g., fetching menu or adding a menu item)."
+        "Users can create a new custom credit card with a name and an auto-generated QR token/payload.",
+        "The screen shows a list/grid of existing custom credit cards.",
+        "Each listed card renders a visible QR code representing its token/payload.",
+        "Users can delete a custom credit card from the list with confirmation/clear affordance.",
+        "All user-facing text on this screen is in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "path": "frontend/src/backend.d.ts",
           "operation": "modify",
-          "description": "Remove/replace any unused or optional icon-library imports that can cause production build failures when dependencies are missing (e.g., eliminate unused react-icons imports), and keep header/footer rendering resilient for deployed environments. Verify the component's usage instructions before implementing (shadcn-ui, build-template-react, initial-app, core-infrastructure)."
+          "description": "Extend the typed backend interface with custom credit card list/delete capabilities (and any necessary types) so the frontend can query and manage cards end-to-end."
         },
         {
-          "path": "frontend/index.html",
+          "path": "frontend/package.json",
           "operation": "modify",
-          "description": "Harden the HTML entry for deployment (add a proper doctype, ensure correct root mounting, and optionally wire a favicon using the generated POS mark) to reduce blank-screen risks on publish. Verify the component's usage instructions before implementing (build-template-react, initial-app, github-export-icp-cli)."
+          "description": "Add a QR code rendering dependency (e.g., a small QR encode-to-SVG/dataURL library) to support displaying each card’s QR code in the management screen."
         },
         {
-          "path": "frontend/public/assets/generated/pos-logo.dim_512x512.png",
+          "path": "frontend/src/hooks/useCustomCreditCards.ts",
           "operation": "create",
-          "description": "Add the required generated asset at the exact path so deployed builds can load it (used by the header logo). Source asset: generated/pos-logo.dim_512x512.png."
+          "description": "Create React Query hooks for custom credit cards (list, create, delete) using the existing actor connection; keep error handling user-friendly and in English."
         },
         {
-          "path": "frontend/public/assets/generated/empty-cart.dim_1200x800.png",
+          "path": "frontend/src/features/custom-cards/QRCodeBadge.tsx",
           "operation": "create",
-          "description": "Add the required generated asset at the exact path so deployed builds can load it (used by POS empty states). Source asset: generated/empty-cart.dim_1200x800.png."
+          "description": "Create a reusable QR display component that renders a QR code for a provided payload/token (SVG or image), plus an optional readable token snippet. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/public/assets/generated/gift-card-illustration.dim_1200x800.png",
+          "path": "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
           "operation": "create",
-          "description": "Add the required generated asset at the exact path so deployed builds can load it (used by Gift Cards screen illustration). Source asset: generated/gift-card-illustration.dim_1200x800.png."
+          "description": "Implement the Custom Credit Cards management screen: name input, auto-generate token (prefer crypto.randomUUID with fallback), create action, grid/list display, QR rendering via QRCodeBadge, and delete confirmation dialog. Use existing shadcn-ui components (Dialog, Card, Button, Input, AlertDialog) without modifying immutable UI files. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/hooks/useMenu.ts",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Make menu fetch/mutations more deployment-resilient (e.g., ensure queries are enabled only when an actor exists; provide clear thrown errors for missing actor) so POS/Menu tabs reliably demonstrate at least one backend query/mutation from the deployed URL. Verify the component's usage instructions before implementing (core-infrastructure)."
+          "description": "Wire the new CustomCreditCardsScreen into the app navigation (add a new Tab and TabsContent) so the screen is reachable."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Replace simulated card form checkout with an in-app QR scanner flow (with manual token entry fallback) that validates with backend and completes the transaction.",
+      "acceptanceCriteria": [
+        "The existing simulated card form is no longer required to complete a 'card' payment; the card flow is driven by QR scanning.",
+        "When the user chooses the credit card payment method, the UI shows a scanner view (camera preview) with clear instructions in English.",
+        "If the browser/device cannot access a camera or QR scanning is unsupported, the UI provides a manual entry fallback for the QR token/payload.",
+        "After a successful scan (or valid manual entry), the app validates the payload with the backend and then completes the transaction using the existing completeTransaction call.",
+        "On successful completion, the checkout dialog closes, the cart clears, and the app navigates to the Receipt tab like other payment methods.",
+        "If validation fails, the user sees an English error message and can try scanning again without losing the cart."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
+          "operation": "create",
+          "description": "Add a checkout subview for QR card payments that uses the selected qr-code component hook (useQRScanner) to show camera preview and scan results, plus a manual token entry fallback when camera/QR is unsupported or permission is denied. Include clear English instructions and robust error display. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/hooks/useActor.ts",
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
           "operation": "modify",
-          "description": "Improve actor initialization robustness for deployed environments (e.g., avoid unnecessary refetch loops; ensure anonymous actor creation works when not authenticated) so backend calls can succeed from the published URL without console-fatal runtime errors. (Do not edit immutable hook paths other than this file.) Verify the component's usage instructions before implementing (core-infrastructure)."
+          "description": "Update the 'card' payment method UI to use QRCardPaymentPanel instead of SimulatedCardForm; drive completion by validating the scanned/entered token with the backend (no hardcoded tokens), then immediately calling the existing completeTransaction mutation and invoking onSuccess on success. Ensure validation errors allow retry without clearing cart."
+        },
+        {
+          "path": "frontend/src/features/checkout/SimulatedCardForm.tsx",
+          "operation": "modify",
+          "description": "Stop using the simulated card form in the checkout card flow (keep the file only if still referenced elsewhere; otherwise simplify exports/comments to avoid confusion)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Include the scanned custom credit card identifier/name in the receipt payment method label and render it safely.",
+      "acceptanceCriteria": [
+        "When a transaction is completed via QR credit card, the stored paymentMethod string includes the selected/scanned card’s display name (or another human-readable identifier).",
+        "Receipt view displays this payment method text without layout regressions."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
+          "operation": "modify",
+          "description": "When QR card validation succeeds, set paymentMethodLabel to include the validated card identifier/display name (e.g., 'QR Credit Card (<name>)') before calling completeTransaction so it is stored in the receipt data."
+        },
+        {
+          "path": "frontend/src/features/receipts/ReceiptScreen.tsx",
+          "operation": "modify",
+          "description": "Harden receipt rendering for potentially long payment method labels (e.g., wrapping/breaking rules) to prevent layout regressions while displaying the QR credit card name/identifier."
         }
       ]
     }

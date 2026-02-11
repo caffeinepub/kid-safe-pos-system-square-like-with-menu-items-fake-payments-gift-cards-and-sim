@@ -91,7 +91,7 @@ export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps)
           <div className="text-center space-y-2">
             <p className="text-sm">
               <span className="text-muted-foreground">Payment Method:</span>{' '}
-              <span className="font-medium">{transaction.paymentMethod}</span>
+              <span className="font-medium break-words">{transaction.paymentMethod}</span>
             </p>
             <div className="fake-money-badge mx-auto">
               🎮 Fake Money Transaction

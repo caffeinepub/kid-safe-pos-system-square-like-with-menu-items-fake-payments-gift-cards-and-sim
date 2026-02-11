@@ -99,6 +99,7 @@ export interface MenuItem {
     price: number;
 }
 export interface backendInterface {
+    addCustomCreditCard(identifier: string, qrPayload: string): Promise<void>;
     addMenuItem(name: string, price: number, category: string | null): Promise<void>;
     completeTransaction(items: Array<MenuItem>, total: number, paymentMethod: string): Promise<void>;
     editMenuItem(index: bigint, name: string, price: number, category: string | null): Promise<void>;
@@ -108,10 +109,25 @@ export interface backendInterface {
     issueGiftCard(code: string, balance: number): Promise<void>;
     removeMenuItem(index: bigint): Promise<void>;
     useGiftCard(code: string, amount: number): Promise<void>;
+    validateCustomCreditCard(qrPayload: string): Promise<string>;
 }
 import type { MenuItem as _MenuItem } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
+    async addCustomCreditCard(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addCustomCreditCard(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addCustomCreditCard(arg0, arg1);
+            return result;
+        }
+    }
     async addMenuItem(arg0: string, arg1: number, arg2: string | null): Promise<void> {
         if (this.processError) {
             try {
@@ -235,6 +251,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.useGiftCard(arg0, arg1);
+            return result;
+        }
+    }
+    async validateCustomCreditCard(arg0: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.validateCustomCreditCard(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.validateCustomCreditCard(arg0);
             return result;
         }
     }

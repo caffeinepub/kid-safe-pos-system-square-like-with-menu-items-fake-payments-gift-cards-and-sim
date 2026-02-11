@@ -15,7 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useCompleteTransaction } from '@/hooks/useCompleteTransaction';
 import { useGiftCardPayment } from '@/hooks/useGiftCards';
-import SimulatedCardForm from './SimulatedCardForm';
+import { useCustomCreditCards } from '@/hooks/useCustomCreditCards';
+import QRCardPaymentPanel from './QRCardPaymentPanel';
 import type { CartItem } from '../../App';
 
 interface CheckoutDialogProps {
@@ -37,17 +38,18 @@ export default function CheckoutDialog({
 }: CheckoutDialogProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [giftCardCode, setGiftCardCode] = useState('');
-  const [cardValid, setCardValid] = useState(false);
   const [error, setError] = useState('');
+  const [validatedCardName, setValidatedCardName] = useState<string | null>(null);
 
   const completeMutation = useCompleteTransaction();
   const giftCardMutation = useGiftCardPayment();
+  const { validateCard, isValidating } = useCustomCreditCards();
 
   const resetForm = () => {
     setPaymentMethod('cash');
     setGiftCardCode('');
-    setCardValid(false);
     setError('');
+    setValidatedCardName(null);
   };
 
   const handleClose = (open: boolean) => {
@@ -55,6 +57,29 @@ export default function CheckoutDialog({
       resetForm();
     }
     onOpenChange(open);
+  };
+
+  const handleQRScanned = async (qrPayload: string) => {
+    setError('');
+    try {
+      const cardIdentifier = await validateCard(qrPayload);
+      setValidatedCardName(cardIdentifier);
+
+      const receiptId = await completeMutation.mutateAsync({
+        items: cart,
+        total,
+        paymentMethod: `QR Credit Card (${cardIdentifier})`,
+      });
+
+      resetForm();
+      onSuccess(receiptId);
+    } catch (err: any) {
+      if (err.message?.includes('Invalid credit card')) {
+        setError('Invalid credit card. Please scan a valid card or create one in the Cards tab.');
+      } else {
+        setError('Payment failed. Please try again.');
+      }
+    }
   };
 
   const handleCheckout = async () => {
@@ -75,12 +100,6 @@ export default function CheckoutDialog({
         }
         await giftCardMutation.mutateAsync({ code: giftCardCode.trim(), amount: total });
         paymentMethodLabel = `Gift Card (${giftCardCode.trim()})`;
-      } else if (paymentMethod === 'card') {
-        if (!cardValid) {
-          setError('Please fill in all card details');
-          return;
-        }
-        paymentMethodLabel = 'Online Credit Card (Simulated)';
       } else {
         paymentMethodLabel = 'Fake Cash';
       }
@@ -106,7 +125,7 @@ export default function CheckoutDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Checkout</DialogTitle>
           <DialogDescription>
@@ -143,7 +162,7 @@ export default function CheckoutDialog({
                 <RadioGroupItem value="card" id="card" />
                 <Label htmlFor="card" className="flex items-center gap-2 cursor-pointer flex-1">
                   <CreditCard className="w-5 h-5 text-primary" />
-                  <span>Online Credit Card</span>
+                  <span>QR Credit Card</span>
                 </Label>
               </div>
             </RadioGroup>
@@ -162,29 +181,41 @@ export default function CheckoutDialog({
           )}
 
           {paymentMethod === 'card' && (
-            <SimulatedCardForm onValidChange={setCardValid} />
+            <QRCardPaymentPanel
+              onScanned={handleQRScanned}
+              isValidating={isValidating || completeMutation.isPending}
+              validationError={error}
+            />
           )}
 
-          {error && (
+          {error && paymentMethod !== 'card' && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {error && paymentMethod === 'card' && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => handleClose(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleCheckout}
-            disabled={completeMutation.isPending || giftCardMutation.isPending}
-          >
-            {completeMutation.isPending || giftCardMutation.isPending
-              ? 'Processing...'
-              : 'Complete Purchase'}
-          </Button>
-        </DialogFooter>
+        {paymentMethod !== 'card' && (
+          <DialogFooter>
+            <Button variant="outline" onClick={() => handleClose(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCheckout}
+              disabled={completeMutation.isPending || giftCardMutation.isPending}
+            >
+              {completeMutation.isPending || giftCardMutation.isPending
+                ? 'Processing...'
+                : 'Complete Purchase'}
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

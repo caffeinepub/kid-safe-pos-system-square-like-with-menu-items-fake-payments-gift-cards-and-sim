@@ -7,7 +7,9 @@ import Map "mo:core/Map";
 import Time "mo:core/Time";
 import Iter "mo:core/Iter";
 import Order "mo:core/Order";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   type MenuItem = {
     name : Text;
@@ -25,6 +27,11 @@ actor {
   type GiftCard = {
     code : Text;
     balance : Float;
+  };
+
+  type CustomCreditCard = {
+    identifier : Text;
+    qrPayload : Text;
   };
 
   module MenuItem {
@@ -45,6 +52,7 @@ actor {
   let menu = List.empty<MenuItem>();
   let transactions = List.empty<Transaction>();
   let giftCards = Map.empty<Text, GiftCard>();
+  let customCreditCards = Map.empty<Text, CustomCreditCard>();
 
   public shared ({ caller }) func addMenuItem(name : Text, price : Float, category : ?Text) : async () {
     if (price < 0) {
@@ -185,4 +193,29 @@ actor {
       };
     };
   };
+
+  public shared ({ caller }) func addCustomCreditCard(identifier : Text, qrPayload : Text) : async () {
+    if (customCreditCards.containsKey(identifier)) {
+      Runtime.trap("Credit card identifier already exists");
+    };
+    let newCard : CustomCreditCard = {
+      identifier;
+      qrPayload;
+    };
+    customCreditCards.add(identifier, newCard);
+  };
+
+  public query ({ caller }) func validateCustomCreditCard(qrPayload : Text) : async Text {
+    let matchingCard = customCreditCards.toArray().find(
+      func((_, card)) {
+        card.qrPayload == qrPayload;
+      }
+    );
+
+    switch (matchingCard) {
+      case (null) { Runtime.trap("Invalid credit card") };
+      case (?(_, card)) { card.identifier };
+    };
+  };
 };
+

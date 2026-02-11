@@ -2,22 +2,67 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-resolve-the-deployment-publish-failure-so-the-existing-version-1-pos-app-can-be-built-and-deployed-successfully-producing-a-working-shareable-url-that-loads-the-app-ui-and-can-make-backend-calls",
-      "featureTitle": "Resolve the deployment/publish failure so the existing Version 1 POS app can be built and deployed successfully, producing a working shareable URL that loads the app UI and can make backend calls.",
+      "featureId": "feature-add-a-frontend-screen-to-create-and-manage-custom-credit-cards-including-displaying-each-card-s-qr-code-for-scanning",
+      "featureTitle": "Add a frontend screen to create and manage custom credit cards, including displaying each card’s QR code for scanning.",
       "files": [
-        "frontend/index.html",
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/hooks/useMenu.ts"
+        "frontend/src/App.tsx",
+        "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
+        "frontend/src/features/custom-cards/QRCodeBadge.tsx",
+        "frontend/src/hooks/useCustomCreditCards.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "camera@1.0.0",
+        "qr-code@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-change-the-checkout-dialog-card-payment-option-so-that-selecting-using-the-credit-card-payment-method-opens-an-in-app-qr-code-scanner-when-a-valid-code-is-scanned-the-transaction-completes-immediately-and-a-receipt-is-shown",
+      "featureTitle": "Change the Checkout dialog card payment option so that selecting/using the credit card payment method opens an in-app QR code scanner; when a valid code is scanned, the transaction completes immediately and a receipt is shown.",
+      "files": [
+        "frontend/src/features/checkout/CheckoutDialog.tsx",
+        "frontend/src/features/checkout/QRCardPaymentPanel.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "camera@1.0.0",
+        "qr-code@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-record-the-custom-credit-card-used-for-payment-on-the-receipt-e-g-include-the-card-name-identifier-in-the-payment-method-label",
+      "featureTitle": "Record the custom credit card used for payment on the receipt (e.g., include the card name/identifier in the payment method label).",
+      "files": [
+        "frontend/src/features/checkout/CheckoutDialog.tsx",
+        "frontend/src/features/receipts/ReceiptScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "camera@1.0.0",
+        "qr-code@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

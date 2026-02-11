@@ -1,15 +1,15 @@
 {
   "frontend/src/index.css": "Global styles with warm coral/peach/yellow OKLCH color palette for kid-safe POS theme, plus print-specific styles for receipts.",
-  "frontend/src/App.tsx": "Main app component managing tab navigation between POS, Menu, Gift Cards, Transactions, and Receipt screens with checkout flow coordination.",
+  "frontend/src/App.tsx": "Main app component managing tab navigation between POS, Menu, Custom Cards, Gift Cards, Transactions, and Receipt screens with checkout flow coordination.",
   "frontend/src/components/layout/AppLayout.tsx": "App layout wrapper with header (logo, fake money badge), main content area, and footer with attribution; removed unused social media icon imports.",
   "frontend/src/features/pos/POSScreen.tsx": "POS terminal screen with tappable menu item grid, shopping cart with quantity controls, and checkout button.",
   "frontend/src/features/menu/MenuManagementScreen.tsx": "Menu management interface with table view of items and add/edit/delete actions with confirmation dialogs.",
   "frontend/src/features/menu/MenuItemForm.tsx": "Reusable dialog form for creating and editing menu items with validation for name, price, and optional category.",
-  "frontend/src/features/checkout/CheckoutDialog.tsx": "Checkout dialog supporting three payment methods (fake cash, gift card, online credit card) with validation and error handling.",
+  "frontend/src/features/checkout/CheckoutDialog.tsx": "Checkout dialog supporting three payment methods (fake cash, gift card, QR credit card) with QR scanner integration, validation, and error handling.",
   "frontend/src/features/checkout/SimulatedCardForm.tsx": "Simulated credit card form with formatted inputs for cardholder name, card number, expiry, and CVC with clear fake payment notice.",
   "frontend/src/features/giftcards/GiftCardsScreen.tsx": "Gift card management screen with issue card form (code generation, balance) and balance lookup functionality.",
   "frontend/src/features/transactions/TransactionsScreen.tsx": "Transaction history table displaying past sales with date, items, payment method, total, and view receipt action.",
-  "frontend/src/features/receipts/ReceiptScreen.tsx": "Receipt view displaying transaction details with line items, totals, payment method, and print functionality.",
+  "frontend/src/features/receipts/ReceiptScreen.tsx": "Receipt view displaying transaction details with line items, totals, payment method with word-break support, and print functionality.",
   "frontend/src/hooks/useMenu.ts": "React Query hooks for menu operations (fetch, add, edit, remove) with clear error messages when actor is not initialized and automatic cache invalidation.",
   "frontend/src/hooks/useCompleteTransaction.ts": "Mutation hook for completing transactions, storing in backend and local transaction store, returning receipt ID.",
   "frontend/src/hooks/useGiftCards.ts": "Mutation hooks for gift card operations (issue, lookup, payment) with backend integration.",
@@ -17,5 +17,11 @@
   "frontend/src/components/common/ErrorState.tsx": "Reusable error state component with icon, message, and optional retry button.",
   "frontend/tailwind.config.js": "Tailwind configuration with Inter font family and extended theme tokens matching the warm color palette.",
   "frontend/index.html": "HTML entry point with proper doctype, favicon reference to generated POS logo, and root mounting element for React app.",
-  "frontend/src/hooks/useActor.ts": "Improved actor initialization hook with better deployment resilience - waits for identity initialization, prevents refetch loops, and only invalidates queries when actor is ready."
+  "frontend/src/hooks/useActor.ts": "Improved actor initialization hook with better deployment resilience - waits for identity initialization, prevents refetch loops, and only invalidates queries when actor is ready.",
+  "frontend/src/hooks/useCustomCreditCards.ts": "React Query hooks for custom credit card operations (add, validate) with backend integration and error handling.",
+  "frontend/src/features/custom-cards/QRCodeBadge.tsx": "Reusable QR code display component that renders QR codes using Google Charts API with optional token display.",
+  "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx": "Custom credit cards management screen with create, list, QR display, and delete functionality using client-side storage and backend integration.",
+  "frontend/src/features/checkout/QRCardPaymentPanel.tsx": "QR scanner checkout panel using useQRScanner hook with camera preview, automatic scanning, manual token entry fallback, and validation states.",
+  "frontend/package.json": "Package configuration restored to original state without qrcode.react dependency.",
+  "frontend/src/backend.d.ts": "TypeScript interface definitions for backend canister including CustomCreditCard type and validateCustomCreditCard method."
 }

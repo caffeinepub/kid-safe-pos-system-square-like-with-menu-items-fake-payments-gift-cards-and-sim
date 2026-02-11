@@ -19,6 +19,7 @@ export const GiftCard = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'addCustomCreditCard' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'addMenuItem' : IDL.Func([IDL.Text, IDL.Float64, IDL.Opt(IDL.Text)], [], []),
   'completeTransaction' : IDL.Func(
       [IDL.Vec(MenuItem), IDL.Float64, IDL.Text],
@@ -36,6 +37,7 @@ export const idlService = IDL.Service({
   'issueGiftCard' : IDL.Func([IDL.Text, IDL.Float64], [], []),
   'removeMenuItem' : IDL.Func([IDL.Nat], [], []),
   'useGiftCard' : IDL.Func([IDL.Text, IDL.Float64], [], []),
+  'validateCustomCreditCard' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
 });
 
 export const idlInitArgs = [];
@@ -49,6 +51,7 @@ export const idlFactory = ({ IDL }) => {
   const GiftCard = IDL.Record({ 'balance' : IDL.Float64, 'code' : IDL.Text });
   
   return IDL.Service({
+    'addCustomCreditCard' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'addMenuItem' : IDL.Func(
         [IDL.Text, IDL.Float64, IDL.Opt(IDL.Text)],
         [],
@@ -70,6 +73,7 @@ export const idlFactory = ({ IDL }) => {
     'issueGiftCard' : IDL.Func([IDL.Text, IDL.Float64], [], []),
     'removeMenuItem' : IDL.Func([IDL.Nat], [], []),
     'useGiftCard' : IDL.Func([IDL.Text, IDL.Float64], [], []),
+    'validateCustomCreditCard' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
   });
 };
 

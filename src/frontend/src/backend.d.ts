@@ -7,6 +7,10 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface CustomCreditCard {
+    identifier: string;
+    qrPayload: string;
+}
 export interface GiftCard {
     balance: number;
     code: string;
@@ -17,6 +21,7 @@ export interface MenuItem {
     price: number;
 }
 export interface backendInterface {
+    addCustomCreditCard(identifier: string, qrPayload: string): Promise<void>;
     addMenuItem(name: string, price: number, category: string | null): Promise<void>;
     completeTransaction(items: Array<MenuItem>, total: number, paymentMethod: string): Promise<void>;
     editMenuItem(index: bigint, name: string, price: number, category: string | null): Promise<void>;
@@ -26,4 +31,5 @@ export interface backendInterface {
     issueGiftCard(code: string, balance: number): Promise<void>;
     removeMenuItem(index: bigint): Promise<void>;
     useGiftCard(code: string, amount: number): Promise<void>;
+    validateCustomCreditCard(qrPayload: string): Promise<string>;
 }
