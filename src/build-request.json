@@ -1,99 +1,84 @@
 {
   "kind": "build_request",
-  "title": "Add custom QR credit cards and QR scanner checkout flow",
+  "title": "Revert POS UI to remove QR-code-based custom credit cards and scanner flow",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add backend support for custom credit cards identified by a QR payload so the app can create cards and validate scanned QR codes during checkout.",
-      "target": "backend",
+      "text": "Remove the QR-code-based Custom Credit Cards feature from the main navigation by deleting the \"Cards\" tab and its screen from the app UI.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-10"
         ],
         "quotes": [
-          "Make it so like you’re gonna make custom credit cards and they have QR codes ... it’s a QR code scanner and scan it and it’s right then it goes through"
+          "Um, go back to the normal design. I don't like the QR code thing anymore."
         ]
       },
       "acceptanceCriteria": [
-        "Backend exposes methods to create a custom credit card record (at minimum: display name + QR payload/token).",
-        "Backend exposes a query method to list all custom credit cards.",
-        "Backend exposes a method to delete a custom credit card by an identifier.",
-        "Backend exposes a method to validate a scanned QR payload/token and returns the associated card info or throws an error if invalid.",
-        "Validation method is used by the frontend card payment flow (no hardcoded valid tokens in the UI)."
+        "The top-level tabs no longer include a \"Cards\" tab.",
+        "Navigating the app does not render CustomCreditCardsScreen anywhere.",
+        "The tab layout (e.g., grid columns) is updated so spacing/alignment remains correct."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add a frontend screen to create and manage custom credit cards, including displaying each card’s QR code for scanning.",
+      "text": "Revert the Checkout dialog so it no longer offers a QR-based credit card payment method and no longer uses the in-app QR scanner flow.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-10"
         ],
         "quotes": [
-          "make custom credit cards and they have QR codes"
+          "go back to the normal design",
+          "I don't like the QR code thing anymore."
         ]
       },
       "acceptanceCriteria": [
-        "Users can create a new custom credit card with a name and an auto-generated QR token/payload.",
-        "The screen shows a list/grid of existing custom credit cards.",
-        "Each listed card renders a visible QR code representing its token/payload.",
-        "Users can delete a custom credit card from the list with confirmation/clear affordance.",
-        "All user-facing text on this screen is in English."
+        "The payment method list in CheckoutDialog does not show \"QR Credit Card\".",
+        "CheckoutDialog does not render QRCardPaymentPanel and does not attempt to start/stop camera scanning.",
+        "Completing a purchase works using the remaining payment methods (e.g., Fake Cash and Gift Card) without referencing QR/card token validation."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Change the Checkout dialog card payment option so that selecting/using the credit card payment method opens an in-app QR code scanner; when a valid code is scanned, the transaction completes immediately and a receipt is shown.",
+      "text": "Remove unused QR/custom-card frontend modules and dependencies from the build after the UI is reverted (components, hooks, and imports related to custom QR credit cards and scanning).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-10"
         ],
         "quotes": [
-          "when you pay and you press the credit card button, it’s a QR code scanner and scan it and it’s right then it goes through"
+          "I don't like the QR code thing anymore."
         ]
       },
       "acceptanceCriteria": [
-        "The existing simulated card form is no longer required to complete a 'card' payment; the card flow is driven by QR scanning.",
-        "When the user chooses the credit card payment method, the UI shows a scanner view (camera preview) with clear instructions in English.",
-        "If the browser/device cannot access a camera or QR scanning is unsupported, the UI provides a manual entry fallback for the QR token/payload.",
-        "After a successful scan (or valid manual entry), the app validates the payload with the backend and then completes the transaction using the existing completeTransaction call.",
-        "On successful completion, the checkout dialog closes, the cart clears, and the app navigates to the Receipt tab like other payment methods.",
-        "If validation fails, the user sees an English error message and can try scanning again without losing the cart."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Record the custom credit card used for payment on the receipt (e.g., include the card name/identifier in the payment method label).",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "scan it and it’s right then it goes through"
-        ]
-      },
-      "acceptanceCriteria": [
-        "When a transaction is completed via QR credit card, the stored paymentMethod string includes the selected/scanned card’s display name (or another human-readable identifier).",
-        "Receipt view displays this payment method text without layout regressions."
+        "No remaining imports/reference usages of useCustomCreditCards, QRCodeBadge, CustomCreditCardsScreen, or QRCardPaymentPanel from active app code paths.",
+        "The frontend TypeScript build completes without unused/failed import errors related to removed QR/custom-card modules.",
+        "No network requests are made to the Google Charts QR code URL from the running app."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo; only add backend/migration.mo if an upgrade-safe state migration is actually required.",
-    "Do not edit files under frontend/src/components/ui or any other immutablePaths listed in SYSTEM_CONTEXT; compose existing UI components instead.",
-    "Do not implement real-world payment processing; this remains a simulated/fake-money POS flow."
+    "Do not edit files under frontend/src/components/ui (Shadcn components are read-only).",
+    "Do not edit any files listed in frontend.immutablePaths in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Integrating with real payment processors (Stripe, card networks, NFC/Apple Pay/Google Pay).",
-    "Third-party authentication providers (only Internet Identity if auth is needed).",
-    "Real-time multi-device synchronization of payments or card scans."
+    "Removing or migrating existing backend state related to custom credit cards (backend can keep existing data; the feature should simply be removed from the UI/flow).",
+    "Adding new payment providers or real payment processing."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

@@ -1,97 +1,78 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Custom QR credit cards management + QR scanner checkout flow",
+  "title": "Remove QR-based custom credit cards and scanner flow from POS UI",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Add a Custom Credit Cards screen to create, list, show QR codes, and delete cards.",
+      "id": "REQ-1",
+      "summary": "Remove the Cards tab and ensure the Custom Credit Cards screen is no longer reachable from the UI.",
       "acceptanceCriteria": [
-        "Users can create a new custom credit card with a name and an auto-generated QR token/payload.",
-        "The screen shows a list/grid of existing custom credit cards.",
-        "Each listed card renders a visible QR code representing its token/payload.",
-        "Users can delete a custom credit card from the list with confirmation/clear affordance.",
-        "All user-facing text on this screen is in English."
+        "The top-level tabs no longer include a \"Cards\" tab.",
+        "Navigating the app does not render CustomCreditCardsScreen anywhere.",
+        "The tab layout (e.g., grid columns) is updated so spacing/alignment remains correct."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/backend.d.ts",
-          "operation": "modify",
-          "description": "Extend the typed backend interface with custom credit card list/delete capabilities (and any necessary types) so the frontend can query and manage cards end-to-end."
-        },
-        {
-          "path": "frontend/package.json",
-          "operation": "modify",
-          "description": "Add a QR code rendering dependency (e.g., a small QR encode-to-SVG/dataURL library) to support displaying each card’s QR code in the management screen."
-        },
-        {
-          "path": "frontend/src/hooks/useCustomCreditCards.ts",
-          "operation": "create",
-          "description": "Create React Query hooks for custom credit cards (list, create, delete) using the existing actor connection; keep error handling user-friendly and in English."
-        },
-        {
-          "path": "frontend/src/features/custom-cards/QRCodeBadge.tsx",
-          "operation": "create",
-          "description": "Create a reusable QR display component that renders a QR code for a provided payload/token (SVG or image), plus an optional readable token snippet. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
-          "operation": "create",
-          "description": "Implement the Custom Credit Cards management screen: name input, auto-generate token (prefer crypto.randomUUID with fallback), create action, grid/list display, QR rendering via QRCodeBadge, and delete confirmation dialog. Use existing shadcn-ui components (Dialog, Card, Button, Input, AlertDialog) without modifying immutable UI files. Verify the component's usage instructions before implementing."
-        },
-        {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wire the new CustomCreditCardsScreen into the app navigation (add a new Tab and TabsContent) so the screen is reachable."
+          "description": "Remove the \"Cards\" tab trigger and the associated TabsContent rendering CustomCreditCardsScreen; remove the CustomCreditCardsScreen import; update the TabsList grid column count so tab spacing/alignment remains correct."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Revert CheckoutDialog to remove the QR Credit Card payment method and eliminate the in-app QR scanner flow.",
+      "acceptanceCriteria": [
+        "The payment method list in CheckoutDialog does not show \"QR Credit Card\".",
+        "CheckoutDialog does not render QRCardPaymentPanel and does not attempt to start/stop camera scanning.",
+        "Completing a purchase works using the remaining payment methods (e.g., Fake Cash and Gift Card) without referencing QR/card token validation."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
+          "operation": "modify",
+          "description": "Remove the QR-based payment method option from the payment method RadioGroup; remove QRCardPaymentPanel rendering and all QR/card validation flow (including useCustomCreditCards usage and any scanner start/stop logic); simplify state and error handling to support only remaining methods (e.g., cash and gift card) and ensure completing a purchase still works. This change removes usage of the selected qr-code/camera capabilities (scanner hooks); verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Replace simulated card form checkout with an in-app QR scanner flow (with manual token entry fallback) that validates with backend and completes the transaction.",
+      "summary": "Delete unused QR/custom-card modules and clean up imports so the frontend build no longer references QR/scanner or Google Charts QR generation.",
       "acceptanceCriteria": [
-        "The existing simulated card form is no longer required to complete a 'card' payment; the card flow is driven by QR scanning.",
-        "When the user chooses the credit card payment method, the UI shows a scanner view (camera preview) with clear instructions in English.",
-        "If the browser/device cannot access a camera or QR scanning is unsupported, the UI provides a manual entry fallback for the QR token/payload.",
-        "After a successful scan (or valid manual entry), the app validates the payload with the backend and then completes the transaction using the existing completeTransaction call.",
-        "On successful completion, the checkout dialog closes, the cart clears, and the app navigates to the Receipt tab like other payment methods.",
-        "If validation fails, the user sees an English error message and can try scanning again without losing the cart."
+        "No remaining imports/reference usages of useCustomCreditCards, QRCodeBadge, CustomCreditCardsScreen, or QRCardPaymentPanel from active app code paths.",
+        "The frontend TypeScript build completes without unused/failed import errors related to removed QR/custom-card modules.",
+        "No network requests are made to the Google Charts QR code URL from the running app."
       ],
       "file_operations": [
         {
           "path": "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
-          "operation": "create",
-          "description": "Add a checkout subview for QR card payments that uses the selected qr-code component hook (useQRScanner) to show camera preview and scan results, plus a manual token entry fallback when camera/QR is unsupported or permission is denied. Include clear English instructions and robust error display. Verify the component's usage instructions before implementing."
+          "operation": "delete",
+          "description": "Delete the QR-card payment panel module that embeds the QR scanner/manual token flow (removes usage of the selected qr-code scanner capability); verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
+          "operation": "delete",
+          "description": "Delete the Custom Credit Cards screen module so it cannot be referenced or bundled."
+        },
+        {
+          "path": "frontend/src/features/custom-cards/QRCodeBadge.tsx",
+          "operation": "delete",
+          "description": "Delete the QRCodeBadge module that generates QR images via Google Charts to ensure the app no longer makes requests to the Google Charts QR code URL."
+        },
+        {
+          "path": "frontend/src/hooks/useCustomCreditCards.ts",
+          "operation": "delete",
+          "description": "Delete the custom credit card hook module; ensure no remaining active imports/reference usages."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Confirm all imports/usages of CustomCreditCardsScreen are removed so there are no remaining references from active app code paths."
         },
         {
           "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
           "operation": "modify",
-          "description": "Update the 'card' payment method UI to use QRCardPaymentPanel instead of SimulatedCardForm; drive completion by validating the scanned/entered token with the backend (no hardcoded tokens), then immediately calling the existing completeTransaction mutation and invoking onSuccess on success. Ensure validation errors allow retry without clearing cart."
-        },
-        {
-          "path": "frontend/src/features/checkout/SimulatedCardForm.tsx",
-          "operation": "modify",
-          "description": "Stop using the simulated card form in the checkout card flow (keep the file only if still referenced elsewhere; otherwise simplify exports/comments to avoid confusion)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Include the scanned custom credit card identifier/name in the receipt payment method label and render it safely.",
-      "acceptanceCriteria": [
-        "When a transaction is completed via QR credit card, the stored paymentMethod string includes the selected/scanned card’s display name (or another human-readable identifier).",
-        "Receipt view displays this payment method text without layout regressions."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "operation": "modify",
-          "description": "When QR card validation succeeds, set paymentMethodLabel to include the validated card identifier/display name (e.g., 'QR Credit Card (<name>)') before calling completeTransaction so it is stored in the receipt data."
-        },
-        {
-          "path": "frontend/src/features/receipts/ReceiptScreen.tsx",
-          "operation": "modify",
-          "description": "Harden receipt rendering for potentially long payment method labels (e.g., wrapping/breaking rules) to prevent layout regressions while displaying the QR credit card name/identifier."
+          "description": "Remove imports and any remaining references to QRCardPaymentPanel and useCustomCreditCards so TypeScript builds cleanly without missing/unused import errors."
         }
       ]
     }

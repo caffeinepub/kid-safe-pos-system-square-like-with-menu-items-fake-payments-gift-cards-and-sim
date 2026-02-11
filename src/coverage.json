@@ -1,92 +1,71 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T18:29:47.809Z",
+  "generatedAt": "2026-02-11T23:25:06.409Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
+    "total": 3,
     "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add backend support for custom credit cards identified by a QR payload so the app can create cards and validate scanned QR codes during checkout.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Add a frontend screen to create and manage custom credit cards, including displaying each card’s QR code for scanning.",
+        "summary": "Remove the QR-code-based Custom Credit Cards feature from the main navigation by deleting the \"Cards\" tab and its screen from the app UI.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/package.json",
-          "frontend/src/hooks/useCustomCreditCards.ts",
-          "frontend/src/features/custom-cards/QRCodeBadge.tsx",
-          "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
           "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/backend.d.ts",
-          "frontend/src/hooks/useCustomCreditCards.ts",
-          "frontend/src/features/custom-cards/QRCodeBadge.tsx",
-          "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
           "frontend/src/App.tsx"
         ]
       },
       {
-        "id": "REQ-3",
-        "summary": "Change the Checkout dialog card payment option so that selecting/using the credit card payment method opens an in-app QR code scanner; when a valid code is scanned, the transaction completes immediately and a receipt is shown.",
+        "id": "REQ-2",
+        "summary": "Revert the Checkout dialog so it no longer offers a QR-based credit card payment method and no longer uses the in-app QR scanner flow.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/features/checkout/SimulatedCardForm.tsx"
+          "frontend/src/features/checkout/CheckoutDialog.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
           "frontend/src/features/checkout/CheckoutDialog.tsx"
         ]
       },
       {
-        "id": "REQ-4",
-        "summary": "Record the custom credit card used for payment on the receipt (e.g., include the card name/identifier in the payment method label).",
+        "id": "REQ-3",
+        "summary": "Remove unused QR/custom-card frontend modules and dependencies from the build after the UI is reverted (components, hooks, and imports related to custom QR credit cards and scanning).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/features/receipts/ReceiptScreen.tsx"
+          "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
+          "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
+          "frontend/src/features/custom-cards/QRCodeBadge.tsx",
+          "frontend/src/hooks/useCustomCreditCards.ts",
+          "frontend/src/App.tsx",
+          "frontend/src/features/checkout/CheckoutDialog.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/features/checkout/CheckoutDialog.tsx",
-          "frontend/src/features/receipts/ReceiptScreen.tsx"
+          "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
+          "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
+          "frontend/src/features/custom-cards/QRCodeBadge.tsx",
+          "frontend/src/hooks/useCustomCreditCards.ts",
+          "frontend/src/App.tsx",
+          "frontend/src/features/checkout/CheckoutDialog.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/camera/useCamera.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
     "frontend/src/features/checkout/CheckoutDialog.tsx",
     "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
     "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
     "frontend/src/features/custom-cards/QRCodeBadge.tsx",
-    "frontend/src/features/receipts/ReceiptScreen.tsx",
     "frontend/src/hooks/useCustomCreditCards.ts",
-    "frontend/src/qr-code/useQRScanner.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

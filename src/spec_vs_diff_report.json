@@ -1,74 +1,31 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-11T18:29:47.806Z",
-  "summary": "Diff adds a QR-driven card payment panel and a new Custom Credit Cards tab/screen, plus introduces backend state migration for a new customCreditCards map. However, several backend APIs and frontend management behaviors required for full CRUD + listing + backend-sourced data appear missing or not evidenced in the diff summary, and the QR rendering uses an external Google Charts API that was not requested.",
+  "generatedAt": "2026-02-11T23:25:06.407Z",
+  "summary": "REQ-1 and REQ-2 appear implemented: the main Tabs navigation no longer includes a Cards tab, and CheckoutDialog’s payment methods are limited to cash/gift card with no visible QR scanner panel usage in the shown diff. REQ-3 is not implemented in the provided diff summary: QR/custom-card modules still exist and are still described as active in the repository summaries, indicating they were not removed/fully de-referenced from the build.",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "Backend exposes a query method to list all custom credit cards.",
-      "reason": "The frontend hook does not implement any list query, and no backend list method is shown/mentioned in the backend diff excerpt.",
+      "id": "REQ-3",
+      "requirement": "Remove unused QR/custom-card frontend modules and dependencies from the build after the UI is reverted (components, hooks, and imports related to custom QR credit cards and scanning).",
+      "reason": "The diff shows QR/custom-card modules still present and the repository file summaries still describe them as implemented features (QR code via Google Charts, custom cards screen, QR scanner checkout panel). There is no evidence of these files being removed or fully de-referenced; only UI navigation/checkout selection appears reverted.",
       "evidence": [
+        "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
+        "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
+        "frontend/src/features/custom-cards/QRCodeBadge.tsx",
         "frontend/src/hooks/useCustomCreditCards.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-1",
-      "requirement": "Backend exposes a method to delete a custom credit card by an identifier.",
-      "reason": "No delete method is shown/mentioned in backend changes, and the frontend does not call any backend delete API.",
-      "evidence": [
-        "frontend/src/hooks/useCustomCreditCards.ts",
-        "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "The screen shows a list/grid of existing custom credit cards (backed by the backend list API).",
-      "reason": "CustomCreditCardsScreen maintains its own local `cards` state and adds to it after creation; there is no evidenced query to load existing cards from the backend.",
-      "evidence": [
-        "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
-        "frontend/src/hooks/useCustomCreditCards.ts"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "Users can delete a custom credit card from the list with confirmation/clear affordance (and deletion is persisted via backend delete API).",
-      "reason": "The delete handler shown only filters local state (`setCards(cards.filter(...))`) and does not call any backend delete method; thus deletion is not evidenced as persisted.",
-      "evidence": [
-        "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
-        "frontend/src/hooks/useCustomCreditCards.ts"
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "QR code images are generated via Google Charts API (external third-party web service).",
-      "reason": "The BuildRequest did not request using an external QR generation service; it only required that each listed card renders a visible QR code.",
-      "evidence": [
-        "frontend/src/features/custom-cards/QRCodeBadge.tsx"
-      ]
-    },
-    {
-      "description": "Custom credit cards management screen appears to use client-side-only state for listing/deleting cards (rather than loading/persisting via backend list/delete APIs).",
-      "reason": "BuildRequest requires backend CRUD (create/list/delete) and implies the management screen should manage existing cards; the diff shows local state used for the list and deletion without backend calls.",
-      "evidence": [
-        "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx"
-      ]
-    }
-  ],
-  "confidence": 0.72,
+  "hallucinated_features": [],
+  "confidence": 0.74,
   "changed_files": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
     "frontend/src/features/checkout/CheckoutDialog.tsx",
     "frontend/src/features/checkout/QRCardPaymentPanel.tsx",
     "frontend/src/features/custom-cards/CustomCreditCardsScreen.tsx",
     "frontend/src/features/custom-cards/QRCodeBadge.tsx",
-    "frontend/src/features/receipts/ReceiptScreen.tsx",
     "frontend/src/hooks/useCustomCreditCards.ts",
     "project_state.json"
   ]

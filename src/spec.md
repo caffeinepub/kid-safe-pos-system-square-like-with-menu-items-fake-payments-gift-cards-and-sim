@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add custom QR-based “credit cards” and a QR scanner-driven checkout flow that validates scanned tokens with the backend and records the chosen card on receipts.
+**Goal:** Revert the POS UI back to the non-QR design by removing the custom QR credit card feature, its navigation entry, and the QR-based checkout/scanner flow.
 
 **Planned changes:**
-- Backend: add CRUD for custom QR credit card records (display name + QR token/payload) and an endpoint to validate a scanned token and return matching card info.
-- Frontend: add a management screen to create/list/delete custom QR credit cards and render each card’s QR code.
-- Frontend: replace the existing checkout “credit card” payment UI with an in-app QR scanner flow, including a manual token entry fallback when camera/scan is unavailable.
-- Both: when completing a transaction via QR card, store and display a payment method label that includes the scanned card’s human-readable name/identifier on the receipt.
+- Remove the “Cards” tab from the main navigation and ensure the CustomCreditCardsScreen is no longer reachable or rendered anywhere.
+- Update the tab layout/grid so remaining tabs keep correct spacing and alignment after removing “Cards”.
+- Revert the Checkout dialog to remove the “QR Credit Card” payment option and eliminate any in-app QR scanner/camera flow (do not render QRCardPaymentPanel).
+- Clean up unused QR/custom-card frontend modules, hooks, and imports so the build has no remaining references and makes no Google Charts QR-code URL requests.
 
-**User-visible outcome:** Users can create QR credit cards in-app, scan a card’s QR code when paying by credit card (or manually enter the token), complete checkout immediately after validation, and see which QR card was used on the receipt.
+**User-visible outcome:** The app no longer shows a “Cards” tab or any QR-based credit card payment/scanning in checkout; purchases still complete using the remaining payment methods (e.g., cash and gift card).
