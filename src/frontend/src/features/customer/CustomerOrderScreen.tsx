@@ -6,10 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 import type { MenuItem } from "../../backend";
-import SizePickerDialog, {
-  type DrinkSize,
-  isDrink,
-} from "../../components/SizePickerDialog";
 import { useMenu } from "../../hooks/useMenu";
 import { useOrdersStore } from "../../state/ordersStore";
 
@@ -26,33 +22,17 @@ export default function CustomerOrderScreen() {
   const [nameError, setNameError] = useState(false);
   const [phase, setPhase] = useState<Phase>("ordering");
   const [lastOrderName, setLastOrderName] = useState("");
-  const [pendingItem, setPendingItem] = useState<MenuItem | null>(null);
 
-  const addToCart = (name: string, price: number) => {
+  const addToCart = (item: MenuItem) => {
     setCart((prev) => {
-      const existing = prev.find((c) => c.name === name);
+      const existing = prev.find((c) => c.name === item.name);
       if (existing) {
         return prev.map((c) =>
-          c.name === name ? { ...c, quantity: c.quantity + 1 } : c,
+          c.name === item.name ? { ...c, quantity: c.quantity + 1 } : c,
         );
       }
-      return [...prev, { name, price, quantity: 1 }];
+      return [...prev, { name: item.name, price: item.price, quantity: 1 }];
     });
-  };
-
-  const handleItemClick = (item: MenuItem) => {
-    if (isDrink(item.category?.[0] ?? null)) {
-      setPendingItem(item);
-    } else {
-      addToCart(item.name, item.price);
-    }
-  };
-
-  const handleSizeSelect = (size: DrinkSize, finalPrice: number) => {
-    if (pendingItem) {
-      addToCart(`${pendingItem.name} (${size})`, finalPrice);
-      setPendingItem(null);
-    }
   };
 
   const updateQty = (name: string, delta: number) => {
@@ -151,7 +131,7 @@ export default function CustomerOrderScreen() {
                 key={item.name}
                 type="button"
                 data-ocid={`customer.item.${idx + 1}`}
-                onClick={() => handleItemClick(item)}
+                onClick={() => addToCart(item)}
                 className="bg-card border border-border rounded-2xl p-4 flex flex-col items-center gap-2 shadow-sm hover:shadow-md hover:border-primary transition-all active:scale-95 cursor-pointer text-left"
               >
                 <span className="text-3xl">
@@ -162,7 +142,6 @@ export default function CustomerOrderScreen() {
                 </span>
                 <Badge variant="secondary" className="text-xs">
                   ${item.price.toFixed(2)}
-                  {isDrink(item.category?.[0] ?? null) && "+"}
                 </Badge>
               </button>
             ))}
@@ -278,16 +257,6 @@ export default function CustomerOrderScreen() {
           </div>
         </aside>
       </div>
-
-      {pendingItem && (
-        <SizePickerDialog
-          open={!!pendingItem}
-          itemName={pendingItem.name}
-          basePrice={pendingItem.price}
-          onSelect={handleSizeSelect}
-          onClose={() => setPendingItem(null)}
-        />
-      )}
     </div>
   );
 }

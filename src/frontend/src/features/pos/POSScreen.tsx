@@ -6,11 +6,6 @@ import { useMenu } from "@/hooks/useMenu";
 import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { CartItem } from "../../App";
-import type { MenuItem } from "../../backend";
-import SizePickerDialog, {
-  type DrinkSize,
-  isDrink,
-} from "../../components/SizePickerDialog";
 import CheckoutDialog from "../checkout/CheckoutDialog";
 
 interface POSScreenProps {
@@ -21,39 +16,29 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const { data: menuItems, isLoading, error } = useMenu();
-  const [pendingItem, setPendingItem] = useState<MenuItem | null>(null);
 
-  const addToCart = (item: MenuItem, size?: DrinkSize, price?: number) => {
-    const name = size ? `${item.name} (${size})` : item.name;
-    const finalPrice = price ?? item.price;
-    const cartKey = name;
+  const addToCart = (item: {
+    name: string;
+    price: number;
+    category?: string;
+  }) => {
     setCart((prev) => {
-      const existing = prev.find((i) => i.name === cartKey);
+      const existing = prev.find((i) => i.name === item.name);
       if (existing) {
         return prev.map((i) =>
-          i.name === cartKey ? { ...i, quantity: i.quantity + 1 } : i,
+          i.name === item.name ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
       return [
         ...prev,
-        { name, price: finalPrice, category: item.category, quantity: 1 },
+        {
+          name: item.name,
+          price: item.price,
+          category: item.category,
+          quantity: 1,
+        },
       ];
     });
-  };
-
-  const handleItemClick = (item: MenuItem) => {
-    if (isDrink(item.category?.[0] ?? null)) {
-      setPendingItem(item);
-    } else {
-      addToCart(item);
-    }
-  };
-
-  const handleSizeSelect = (size: DrinkSize, finalPrice: number) => {
-    if (pendingItem) {
-      addToCart(pendingItem, size, finalPrice);
-      setPendingItem(null);
-    }
   };
 
   const updateQuantity = (name: string, delta: number) => {
@@ -140,7 +125,7 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
                     key={item.name}
                     variant="outline"
                     className="h-auto flex flex-col items-start p-4 hover:bg-accent hover:border-primary transition-all"
-                    onClick={() => handleItemClick(item)}
+                    onClick={() => addToCart(item)}
                   >
                     <span className="font-semibold text-base mb-1">
                       {item.name}
@@ -151,7 +136,6 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
                     {item.category && (
                       <span className="text-xs text-muted-foreground mt-1">
                         {item.category}
-                        {isDrink(item.category?.[0] ?? null) && " · S/M/L"}
                       </span>
                     )}
                   </Button>
@@ -276,16 +260,6 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
         total={total}
         onSuccess={handleCheckoutSuccess}
       />
-
-      {pendingItem && (
-        <SizePickerDialog
-          open={!!pendingItem}
-          itemName={pendingItem.name}
-          basePrice={pendingItem.price}
-          onSelect={handleSizeSelect}
-          onClose={() => setPendingItem(null)}
-        />
-      )}
     </div>
   );
 }
