@@ -2,8 +2,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import AppLayout from "./components/layout/AppLayout";
 import CreditCardsScreen from "./features/creditcards/CreditCardsScreen";
+import CustomerOrderScreen from "./features/customer/CustomerOrderScreen";
 import GiftCardsScreen from "./features/giftcards/GiftCardsScreen";
 import MenuManagementScreen from "./features/menu/MenuManagementScreen";
+import CustomerOrdersScreen from "./features/orders/CustomerOrdersScreen";
+import PasscodeScreen from "./features/passcode/PasscodeScreen";
 import POSScreen from "./features/pos/POSScreen";
 import ReceiptScreen from "./features/receipts/ReceiptScreen";
 import TransactionsScreen from "./features/transactions/TransactionsScreen";
@@ -15,9 +18,25 @@ export type CartItem = {
   category?: string;
 };
 
+type Mode = "cashier" | "customer" | null;
+
 function App() {
+  const [mode, setMode] = useState<Mode>(null);
   const [activeTab, setActiveTab] = useState("pos");
   const [currentReceiptId, setCurrentReceiptId] = useState<string | null>(null);
+
+  if (mode === null) {
+    return (
+      <PasscodeScreen
+        onCashierUnlock={() => setMode("cashier")}
+        onCustomerUnlock={() => setMode("customer")}
+      />
+    );
+  }
+
+  if (mode === "customer") {
+    return <CustomerOrderScreen />;
+  }
 
   const handleCheckoutComplete = (receiptId: string) => {
     setCurrentReceiptId(receiptId);
@@ -37,11 +56,12 @@ function App() {
   return (
     <AppLayout>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6 max-w-3xl mx-auto mb-6">
+        <TabsList className="grid w-full grid-cols-7 max-w-3xl mx-auto mb-6">
           <TabsTrigger value="pos">POS</TabsTrigger>
           <TabsTrigger value="menu">Menu</TabsTrigger>
           <TabsTrigger value="giftcards">Gift Cards</TabsTrigger>
           <TabsTrigger value="creditcards">Cards</TabsTrigger>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
           <TabsTrigger value="transactions">History</TabsTrigger>
           <TabsTrigger value="receipt" disabled={!currentReceiptId}>
             Receipt
@@ -62,6 +82,10 @@ function App() {
 
         <TabsContent value="creditcards" className="mt-0">
           <CreditCardsScreen />
+        </TabsContent>
+
+        <TabsContent value="orders" className="mt-0">
+          <CustomerOrdersScreen />
         </TabsContent>
 
         <TabsContent value="transactions" className="mt-0">

@@ -14,13 +14,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-4">
               <img
                 src="/assets/generated/pos-logo.dim_512x512.png"
-                alt="POS Logo"
+                alt="W Café Logo"
                 className="w-12 h-12 rounded-xl"
               />
               <div>
-                <h1 className="text-2xl font-bold text-foreground">
-                  Kid's POS
-                </h1>
+                <h1 className="text-2xl font-bold text-foreground">W Café</h1>
                 <span className="fake-money-badge">
                   🎮 Fake Money Only - For Fun!
                 </span>
@@ -38,7 +36,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Kid's POS. All transactions are
+              © {new Date().getFullYear()} W Café. All transactions are
               simulated.
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
