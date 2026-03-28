@@ -1,8 +1,8 @@
-import { Heart } from 'lucide-react';
+import { Heart } from "lucide-react";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const appIdentifier = encodeURIComponent(
-    typeof window !== 'undefined' ? window.location.hostname : 'pos-app'
+    typeof window !== "undefined" ? window.location.hostname : "pos-app",
   );
 
   return (
@@ -18,7 +18,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 className="w-12 h-12 rounded-xl"
               />
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Kid's POS</h1>
+                <h1 className="text-2xl font-bold text-foreground">
+                  Kid's POS
+                </h1>
                 <span className="fake-money-badge">
                   🎮 Fake Money Only - For Fun!
                 </span>
@@ -36,10 +38,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Kid's POS. All transactions are simulated.
+              © {new Date().getFullYear()} Kid's POS. All transactions are
+              simulated.
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              Built with <Heart className="w-4 h-4 text-primary fill-primary" /> using{' '}
+              Built with <Heart className="w-4 h-4 text-primary fill-primary" />{" "}
+              using{" "}
               <a
                 href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
                 target="_blank"

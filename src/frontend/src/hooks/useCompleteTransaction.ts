@@ -1,8 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
-import { useActor } from './useActor';
-import { useTransactionStore } from '../state/transactionsStore';
-import type { CartItem } from '../App';
-import type { MenuItem } from '../backend';
+import { useMutation } from "@tanstack/react-query";
+import type { CartItem } from "../App";
+import type { MenuItem } from "../backend";
+import { useTransactionStore } from "../state/transactionsStore";
+import { useActor } from "./useActor";
 
 export function useCompleteTransaction() {
   const { actor } = useActor();
@@ -18,7 +18,7 @@ export function useCompleteTransaction() {
       total: number;
       paymentMethod: string;
     }) => {
-      if (!actor) throw new Error('Actor not initialized');
+      if (!actor) throw new Error("Actor not initialized");
 
       const backendItems: MenuItem[] = items.map((item) => ({
         name: item.name,

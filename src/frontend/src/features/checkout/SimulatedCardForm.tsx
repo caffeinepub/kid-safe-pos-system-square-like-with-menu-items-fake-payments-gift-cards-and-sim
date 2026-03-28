@@ -1,38 +1,40 @@
-import { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Info } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Info } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface SimulatedCardFormProps {
   onValidChange: (valid: boolean) => void;
 }
 
-export default function SimulatedCardForm({ onValidChange }: SimulatedCardFormProps) {
-  const [cardName, setCardName] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
+export default function SimulatedCardForm({
+  onValidChange,
+}: SimulatedCardFormProps) {
+  const [cardName, setCardName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvc, setCvc] = useState("");
 
   useEffect(() => {
     const isValid =
       cardName.trim().length > 0 &&
-      cardNumber.replace(/\s/g, '').length >= 13 &&
+      cardNumber.replace(/\s/g, "").length >= 13 &&
       expiry.length === 5 &&
       cvc.length >= 3;
     onValidChange(isValid);
   }, [cardName, cardNumber, expiry, cvc, onValidChange]);
 
   const formatCardNumber = (value: string) => {
-    const cleaned = value.replace(/\s/g, '');
+    const cleaned = value.replace(/\s/g, "");
     const chunks = cleaned.match(/.{1,4}/g) || [];
-    return chunks.join(' ').substring(0, 19);
+    return chunks.join(" ").substring(0, 19);
   };
 
   const formatExpiry = (value: string) => {
-    const cleaned = value.replace(/\D/g, '');
+    const cleaned = value.replace(/\D/g, "");
     if (cleaned.length >= 2) {
-      return cleaned.substring(0, 2) + '/' + cleaned.substring(2, 4);
+      return `${cleaned.substring(0, 2)}/${cleaned.substring(2, 4)}`;
     }
     return cleaned;
   };
@@ -84,7 +86,9 @@ export default function SimulatedCardForm({ onValidChange }: SimulatedCardFormPr
           <Input
             id="cvc"
             value={cvc}
-            onChange={(e) => setCvc(e.target.value.replace(/\D/g, '').substring(0, 4))}
+            onChange={(e) =>
+              setCvc(e.target.value.replace(/\D/g, "").substring(0, 4))
+            }
             placeholder="123"
             maxLength={4}
           />

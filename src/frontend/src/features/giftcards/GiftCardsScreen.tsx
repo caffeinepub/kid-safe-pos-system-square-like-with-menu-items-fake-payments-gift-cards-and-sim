@@ -1,62 +1,68 @@
-import { useState } from 'react';
-import { Gift, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useIssueGiftCard, useGetGiftCard } from '@/hooks/useGiftCards';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { useGetGiftCard, useIssueGiftCard } from "@/hooks/useGiftCards";
+import { Gift, Search } from "lucide-react";
+import { useState } from "react";
 
 export default function GiftCardsScreen() {
-  const [issueBalance, setIssueBalance] = useState('');
-  const [issueCode, setIssueCode] = useState('');
-  const [lookupCode, setLookupCode] = useState('');
-  const [lookupResult, setLookupResult] = useState<{ code: string; balance: number } | null>(null);
-  const [lookupError, setLookupError] = useState('');
+  const [issueBalance, setIssueBalance] = useState("");
+  const [issueCode, setIssueCode] = useState("");
+  const [lookupCode, setLookupCode] = useState("");
+  const [lookupResult, setLookupResult] = useState<{
+    code: string;
+    balance: number;
+  } | null>(null);
+  const [lookupError, setLookupError] = useState("");
 
   const issueMutation = useIssueGiftCard();
   const lookupMutation = useGetGiftCard();
 
   const generateCode = () => {
-    const code = 'GC' + Math.random().toString(36).substring(2, 10).toUpperCase();
+    const code = `GC${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
     setIssueCode(code);
   };
 
   const handleIssue = async (e: React.FormEvent) => {
     e.preventDefault();
-    const balance = parseFloat(issueBalance);
-    if (!issueCode || isNaN(balance) || balance <= 0) {
+    const balance = Number.parseFloat(issueBalance);
+    if (!issueCode || Number.isNaN(balance) || balance <= 0) {
       return;
     }
 
     try {
       await issueMutation.mutateAsync({ code: issueCode, balance });
-      setIssueCode('');
-      setIssueBalance('');
-    } catch (err: any) {
+      setIssueCode("");
+      setIssueBalance("");
+    } catch (_err) {
       // Error handled by mutation
     }
   };
 
   const handleLookup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLookupError('');
+    setLookupError("");
     setLookupResult(null);
 
     if (!lookupCode.trim()) {
-      setLookupError('Please enter a gift card code');
+      setLookupError("Please enter a gift card code");
       return;
     }
 
     try {
       const result = await lookupMutation.mutateAsync(lookupCode.trim());
       setLookupResult(result);
-    } catch (err: any) {
-      if (err.message?.includes('Gift card not found')) {
-        setLookupError('Gift card not found. Please check the code.');
+    } catch (err: unknown) {
+      if (
+        err instanceof Error &&
+        err.message?.includes("Gift card not found")
+      ) {
+        setLookupError("Gift card not found. Please check the code.");
       } else {
-        setLookupError('Failed to lookup gift card. Please try again.');
+        setLookupError("Failed to lookup gift card. Please try again.");
       }
     }
   };
@@ -83,7 +89,11 @@ export default function GiftCardsScreen() {
                     onChange={(e) => setIssueCode(e.target.value.toUpperCase())}
                     placeholder="GC12345678"
                   />
-                  <Button type="button" variant="outline" onClick={generateCode}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={generateCode}
+                  >
                     Generate
                   </Button>
                 </div>
@@ -105,9 +115,9 @@ export default function GiftCardsScreen() {
               {issueMutation.isError && (
                 <Alert variant="destructive">
                   <AlertDescription>
-                    {issueMutation.error?.message?.includes('already exists')
-                      ? 'This gift card code already exists. Please use a different code.'
-                      : 'Failed to issue gift card. Please try again.'}
+                    {issueMutation.error?.message?.includes("already exists")
+                      ? "This gift card code already exists. Please use a different code."
+                      : "Failed to issue gift card. Please try again."}
                   </AlertDescription>
                 </Alert>
               )}
@@ -120,8 +130,12 @@ export default function GiftCardsScreen() {
                 </Alert>
               )}
 
-              <Button type="submit" className="w-full" disabled={issueMutation.isPending}>
-                {issueMutation.isPending ? 'Issuing...' : 'Issue Gift Card'}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={issueMutation.isPending}
+              >
+                {issueMutation.isPending ? "Issuing..." : "Issue Gift Card"}
               </Button>
             </form>
 
@@ -165,11 +179,15 @@ export default function GiftCardsScreen() {
                 <div className="p-4 bg-accent/20 rounded-lg space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Code:</span>
-                    <span className="font-mono font-semibold">{lookupResult.code}</span>
+                    <span className="font-mono font-semibold">
+                      {lookupResult.code}
+                    </span>
                   </div>
                   <Separator />
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Balance:</span>
+                    <span className="text-sm text-muted-foreground">
+                      Balance:
+                    </span>
                     <span className="text-2xl font-bold text-primary">
                       ${lookupResult.balance.toFixed(2)}
                     </span>
@@ -177,8 +195,12 @@ export default function GiftCardsScreen() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={lookupMutation.isPending}>
-                {lookupMutation.isPending ? 'Checking...' : 'Check Balance'}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={lookupMutation.isPending}
+              >
+                {lookupMutation.isPending ? "Checking..." : "Check Balance"}
               </Button>
             </form>
           </CardContent>

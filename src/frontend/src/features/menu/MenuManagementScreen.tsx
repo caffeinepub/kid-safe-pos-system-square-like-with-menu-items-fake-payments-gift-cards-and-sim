@@ -1,15 +1,4 @@
-import { useState } from 'react';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import ErrorState from "@/components/common/ErrorState";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,10 +8,26 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useMenu, useAddMenuItem, useEditMenuItem, useRemoveMenuItem } from '@/hooks/useMenu';
-import MenuItemForm from './MenuItemForm';
-import ErrorState from '@/components/common/ErrorState';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  useAddMenuItem,
+  useEditMenuItem,
+  useMenu,
+  useRemoveMenuItem,
+} from "@/hooks/useMenu";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import MenuItemForm from "./MenuItemForm";
 
 export default function MenuManagementScreen() {
   const [formOpen, setFormOpen] = useState(false);
@@ -73,7 +78,7 @@ export default function MenuManagementScreen() {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Loading menu...</p>
         </div>
       </div>
@@ -84,7 +89,8 @@ export default function MenuManagementScreen() {
     return <ErrorState message="Failed to load menu items" onRetry={refetch} />;
   }
 
-  const editingItem = editingIndex !== null && menuItems ? menuItems[editingIndex] : null;
+  const editingItem =
+    editingIndex !== null && menuItems ? menuItems[editingIndex] : null;
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -117,7 +123,7 @@ export default function MenuManagementScreen() {
               </TableHeader>
               <TableBody>
                 {menuItems.map((item, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={item.name}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>
                       {item.category ? (
@@ -166,12 +172,16 @@ export default function MenuManagementScreen() {
         isLoading={addMutation.isPending || editMutation.isPending}
       />
 
-      <AlertDialog open={deleteIndex !== null} onOpenChange={() => setDeleteIndex(null)}>
+      <AlertDialog
+        open={deleteIndex !== null}
+        onOpenChange={() => setDeleteIndex(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Menu Item</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this item? This action cannot be undone.
+              Are you sure you want to delete this item? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

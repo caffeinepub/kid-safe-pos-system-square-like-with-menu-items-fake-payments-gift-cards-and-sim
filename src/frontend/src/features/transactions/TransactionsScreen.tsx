@@ -1,6 +1,5 @@
-import { Receipt } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -8,14 +7,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useTransactionStore } from '@/state/transactionsStore';
+} from "@/components/ui/table";
+import { useTransactionStore } from "@/state/transactionsStore";
+import { Receipt } from "lucide-react";
 
 interface TransactionsScreenProps {
   onViewReceipt: (receiptId: string) => void;
 }
 
-export default function TransactionsScreen({ onViewReceipt }: TransactionsScreenProps) {
+export default function TransactionsScreen({
+  onViewReceipt,
+}: TransactionsScreenProps) {
   const transactions = useTransactionStore((state) => state.transactions);
 
   return (
@@ -55,8 +57,8 @@ export default function TransactionsScreen({ onViewReceipt }: TransactionsScreen
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        {transaction.items.slice(0, 2).map((item, i) => (
-                          <div key={i}>
+                        {transaction.items.slice(0, 2).map((item) => (
+                          <div key={`${transaction.id}-${item.name}`}>
                             {item.quantity}x {item.name}
                           </div>
                         ))}

@@ -1,17 +1,20 @@
-import { Printer, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { useTransactionStore } from '@/state/transactionsStore';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useTransactionStore } from "@/state/transactionsStore";
+import { ArrowLeft } from "lucide-react";
 
 interface ReceiptScreenProps {
   receiptId: string;
   onBack: () => void;
 }
 
-export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps) {
+export default function ReceiptScreen({
+  receiptId,
+  onBack,
+}: ReceiptScreenProps) {
   const transaction = useTransactionStore((state) =>
-    state.transactions.find((t) => t.id === receiptId)
+    state.transactions.find((t) => t.id === receiptId),
   );
 
   if (!transaction) {
@@ -19,7 +22,9 @@ export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps)
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">Receipt not found</p>
+            <p className="text-center text-muted-foreground">
+              Receipt not found
+            </p>
             <Button onClick={onBack} className="mt-4 mx-auto block">
               Back to POS
             </Button>
@@ -29,24 +34,16 @@ export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps)
     );
   }
 
-  const handlePrint = () => {
-    window.print();
-  };
-
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="no-print mb-4 flex gap-2">
+      <div className="mb-4 flex gap-2">
         <Button variant="outline" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
-        <Button onClick={handlePrint}>
-          <Printer className="w-4 h-4 mr-2" />
-          Print Receipt
-        </Button>
       </div>
 
-      <Card className="print-receipt">
+      <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Kid's POS</CardTitle>
           <p className="text-sm text-muted-foreground">Receipt</p>
@@ -58,8 +55,8 @@ export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps)
           <Separator />
 
           <div className="space-y-3">
-            {transaction.items.map((item, index) => (
-              <div key={index} className="flex justify-between items-start">
+            {transaction.items.map((item) => (
+              <div key={item.name} className="flex justify-between items-start">
                 <div className="flex-1">
                   <p className="font-medium">{item.name}</p>
                   <p className="text-sm text-muted-foreground">
@@ -82,7 +79,9 @@ export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps)
             </div>
             <div className="flex justify-between text-lg font-bold">
               <span>Total</span>
-              <span className="text-primary">${transaction.total.toFixed(2)}</span>
+              <span className="text-primary">
+                ${transaction.total.toFixed(2)}
+              </span>
             </div>
           </div>
 
@@ -90,8 +89,10 @@ export default function ReceiptScreen({ receiptId, onBack }: ReceiptScreenProps)
 
           <div className="text-center space-y-2">
             <p className="text-sm">
-              <span className="text-muted-foreground">Payment Method:</span>{' '}
-              <span className="font-medium break-words">{transaction.paymentMethod}</span>
+              <span className="text-muted-foreground">Payment Method:</span>{" "}
+              <span className="font-medium break-words">
+                {transaction.paymentMethod}
+              </span>
             </p>
             <div className="fake-money-badge mx-auto">
               🎮 Fake Money Transaction

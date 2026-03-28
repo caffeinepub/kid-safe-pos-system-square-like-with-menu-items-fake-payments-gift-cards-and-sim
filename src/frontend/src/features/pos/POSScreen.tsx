@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Plus, Minus, Trash2, ShoppingCart } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { useMenu } from '@/hooks/useMenu';
-import CheckoutDialog from '../checkout/CheckoutDialog';
-import type { CartItem } from '../../App';
-import type { MenuItem } from '../../backend';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { useMenu } from "@/hooks/useMenu";
+import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import { useState } from "react";
+import type { CartItem } from "../../App";
+import type { MenuItem } from "../../backend";
+import CheckoutDialog from "../checkout/CheckoutDialog";
 
 interface POSScreenProps {
   onCheckoutComplete: (receiptId: string) => void;
@@ -23,7 +23,7 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
       const existing = prev.find((i) => i.name === item.name);
       if (existing) {
         return prev.map((i) =>
-          i.name === item.name ? { ...i, quantity: i.quantity + 1 } : i
+          i.name === item.name ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
       return [...prev, { ...item, quantity: 1 }];
@@ -34,9 +34,11 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
     setCart((prev) =>
       prev
         .map((item) =>
-          item.name === name ? { ...item, quantity: item.quantity + delta } : item
+          item.name === name
+            ? { ...item, quantity: item.quantity + delta }
+            : item,
         )
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.quantity > 0),
     );
   };
 
@@ -48,7 +50,10 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
     setCart([]);
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
   const total = subtotal;
 
   const handleCheckoutSuccess = (receiptId: string) => {
@@ -61,7 +66,7 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
     return (
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Loading menu...</p>
         </div>
       </div>
@@ -73,7 +78,9 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
       <div className="flex items-center justify-center h-96">
         <Card className="max-w-md">
           <CardContent className="pt-6">
-            <p className="text-destructive text-center">Failed to load menu. Please try again.</p>
+            <p className="text-destructive text-center">
+              Failed to load menu. Please try again.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -102,14 +109,16 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
               </div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {menuItems.map((item, index) => (
+                {menuItems.map((item) => (
                   <Button
-                    key={index}
+                    key={item.name}
                     variant="outline"
                     className="h-auto flex flex-col items-start p-4 hover:bg-accent hover:border-primary transition-all"
                     onClick={() => addToCart(item)}
                   >
-                    <span className="font-semibold text-base mb-1">{item.name}</span>
+                    <span className="font-semibold text-base mb-1">
+                      {item.name}
+                    </span>
                     <span className="text-primary font-bold text-lg">
                       ${item.price.toFixed(2)}
                     </span>
@@ -157,7 +166,9 @@ export default function POSScreen({ onCheckoutComplete }: POSScreenProps) {
                         className="flex items-center justify-between gap-2 p-2 rounded-lg bg-muted/50"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm truncate">{item.name}</p>
+                          <p className="font-medium text-sm truncate">
+                            {item.name}
+                          </p>
                           <p className="text-xs text-muted-foreground">
                             ${item.price.toFixed(2)} each
                           </p>

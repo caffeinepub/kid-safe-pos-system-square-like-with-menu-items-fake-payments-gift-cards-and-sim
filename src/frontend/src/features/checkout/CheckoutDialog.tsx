@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { Banknote, Gift } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,14 +7,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useCompleteTransaction } from '@/hooks/useCompleteTransaction';
-import { useGiftCardPayment } from '@/hooks/useGiftCards';
-import type { CartItem } from '../../App';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCompleteTransaction } from "@/hooks/useCompleteTransaction";
+import { useGiftCardPayment } from "@/hooks/useGiftCards";
+import { Banknote, CreditCard, Gift } from "lucide-react";
+import { useCallback, useState } from "react";
+import type { CartItem } from "../../App";
+import SimulatedCardForm from "./SimulatedCardForm";
 
 interface CheckoutDialogProps {
   open: boolean;
@@ -25,7 +26,7 @@ interface CheckoutDialogProps {
   onSuccess: (receiptId: string) => void;
 }
 
-type PaymentMethod = 'cash' | 'giftcard';
+type PaymentMethod = "cash" | "giftcard" | "card";
 
 export default function CheckoutDialog({
   open,
@@ -34,17 +35,19 @@ export default function CheckoutDialog({
   total,
   onSuccess,
 }: CheckoutDialogProps) {
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
-  const [giftCardCode, setGiftCardCode] = useState('');
-  const [error, setError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
+  const [giftCardCode, setGiftCardCode] = useState("");
+  const [error, setError] = useState("");
+  const [cardValid, setCardValid] = useState(false);
 
   const completeMutation = useCompleteTransaction();
   const giftCardMutation = useGiftCardPayment();
 
   const resetForm = () => {
-    setPaymentMethod('cash');
-    setGiftCardCode('');
-    setError('');
+    setPaymentMethod("cash");
+    setGiftCardCode("");
+    setError("");
+    setCardValid(false);
   };
 
   const handleClose = (open: boolean) => {
@@ -54,26 +57,39 @@ export default function CheckoutDialog({
     onOpenChange(open);
   };
 
+  const handleCardValidChange = useCallback((valid: boolean) => {
+    setCardValid(valid);
+  }, []);
+
   const handleCheckout = async () => {
-    setError('');
+    setError("");
 
     if (cart.length === 0) {
-      setError('Cart is empty');
+      setError("Cart is empty");
       return;
     }
 
     try {
-      let paymentMethodLabel = '';
+      let paymentMethodLabel = "";
 
-      if (paymentMethod === 'giftcard') {
+      if (paymentMethod === "giftcard") {
         if (!giftCardCode.trim()) {
-          setError('Please enter a gift card code');
+          setError("Please enter a gift card code");
           return;
         }
-        await giftCardMutation.mutateAsync({ code: giftCardCode.trim(), amount: total });
+        await giftCardMutation.mutateAsync({
+          code: giftCardCode.trim(),
+          amount: total,
+        });
         paymentMethodLabel = `Gift Card (${giftCardCode.trim()})`;
+      } else if (paymentMethod === "card") {
+        if (!cardValid) {
+          setError("Please fill in all card details.");
+          return;
+        }
+        paymentMethodLabel = "Online Credit Card";
       } else {
-        paymentMethodLabel = 'Fake Cash';
+        paymentMethodLabel = "Fake Cash";
       }
 
       const receiptId = await completeMutation.mutateAsync({
@@ -85,12 +101,14 @@ export default function CheckoutDialog({
       resetForm();
       onSuccess(receiptId);
     } catch (err: any) {
-      if (err.message?.includes('Insufficient gift card balance')) {
-        setError('Insufficient gift card balance. Please use a different payment method.');
-      } else if (err.message?.includes('Gift card not found')) {
-        setError('Gift card not found. Please check the code and try again.');
+      if (err.message?.includes("Insufficient gift card balance")) {
+        setError(
+          "Insufficient gift card balance. Please use a different payment method.",
+        );
+      } else if (err.message?.includes("Gift card not found")) {
+        setError("Gift card not found. Please check the code and try again.");
       } else {
-        setError('Payment failed. Please try again.');
+        setError("Payment failed. Please try again.");
       }
     }
   };
@@ -108,23 +126,54 @@ export default function CheckoutDialog({
         <div className="space-y-4 py-4">
           <div className="flex justify-between items-center p-4 bg-accent/20 rounded-lg">
             <span className="font-semibold">Total:</span>
-            <span className="text-2xl font-bold text-primary">${total.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-primary">
+              ${total.toFixed(2)}
+            </span>
           </div>
 
           <div className="space-y-3">
             <Label>Payment Method</Label>
-            <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}>
-              <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
+            <RadioGroup
+              value={paymentMethod}
+              onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
+            >
+              <div
+                className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer"
+                data-ocid="checkout.cash.radio"
+              >
                 <RadioGroupItem value="cash" id="cash" />
-                <Label htmlFor="cash" className="flex items-center gap-2 cursor-pointer flex-1">
+                <Label
+                  htmlFor="cash"
+                  className="flex items-center gap-2 cursor-pointer flex-1"
+                >
                   <Banknote className="w-5 h-5 text-primary" />
                   <span>Fake Cash</span>
                 </Label>
               </div>
 
-              <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
+              <div
+                className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer"
+                data-ocid="checkout.card.radio"
+              >
+                <RadioGroupItem value="card" id="card" />
+                <Label
+                  htmlFor="card"
+                  className="flex items-center gap-2 cursor-pointer flex-1"
+                >
+                  <CreditCard className="w-5 h-5 text-primary" />
+                  <span>Online Credit Card</span>
+                </Label>
+              </div>
+
+              <div
+                className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-accent/50 cursor-pointer"
+                data-ocid="checkout.giftcard.radio"
+              >
                 <RadioGroupItem value="giftcard" id="giftcard" />
-                <Label htmlFor="giftcard" className="flex items-center gap-2 cursor-pointer flex-1">
+                <Label
+                  htmlFor="giftcard"
+                  className="flex items-center gap-2 cursor-pointer flex-1"
+                >
                   <Gift className="w-5 h-5 text-primary" />
                   <span>Gift Card</span>
                 </Label>
@@ -132,11 +181,16 @@ export default function CheckoutDialog({
             </RadioGroup>
           </div>
 
-          {paymentMethod === 'giftcard' && (
+          {paymentMethod === "card" && (
+            <SimulatedCardForm onValidChange={handleCardValidChange} />
+          )}
+
+          {paymentMethod === "giftcard" && (
             <div className="space-y-2">
               <Label htmlFor="giftCardCode">Gift Card Code</Label>
               <Input
                 id="giftCardCode"
+                data-ocid="checkout.giftcard.input"
                 value={giftCardCode}
                 onChange={(e) => setGiftCardCode(e.target.value)}
                 placeholder="Enter gift card code"
@@ -145,23 +199,28 @@ export default function CheckoutDialog({
           )}
 
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" data-ocid="checkout.error_state">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleClose(false)}>
+          <Button
+            variant="outline"
+            onClick={() => handleClose(false)}
+            data-ocid="checkout.cancel_button"
+          >
             Cancel
           </Button>
           <Button
+            data-ocid="checkout.submit_button"
             onClick={handleCheckout}
             disabled={completeMutation.isPending || giftCardMutation.isPending}
           >
             {completeMutation.isPending || giftCardMutation.isPending
-              ? 'Processing...'
-              : 'Complete Purchase'}
+              ? "Processing..."
+              : "Complete Purchase"}
           </Button>
         </DialogFooter>
       </DialogContent>

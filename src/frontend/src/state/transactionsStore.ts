@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import type { CartItem } from '../App';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { CartItem } from "../App";
 
 export interface Transaction {
   id: string;
@@ -27,8 +27,8 @@ export const useTransactionStore = create<TransactionStore>()(
       clearTransactions: () => set({ transactions: [] }),
     }),
     {
-      name: 'pos-transactions',
+      name: "pos-transactions",
       version: 1,
-    }
-  )
+    },
+  ),
 );

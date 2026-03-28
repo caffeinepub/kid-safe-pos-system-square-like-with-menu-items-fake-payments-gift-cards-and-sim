@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +6,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import type { MenuItem } from '../../backend';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
+import type { MenuItem } from "../../backend";
 
 interface MenuItemFormProps {
   open: boolean;
@@ -27,20 +27,21 @@ export default function MenuItemForm({
   initialData,
   isLoading,
 }: MenuItemFormProps) {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
   const [errors, setErrors] = useState<{ name?: string; price?: string }>({});
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: open is intentionally used to reset the form when the dialog opens/closes
   useEffect(() => {
     if (initialData) {
       setName(initialData.name);
       setPrice(initialData.price.toString());
-      setCategory(initialData.category || '');
+      setCategory(initialData.category || "");
     } else {
-      setName('');
-      setPrice('');
-      setCategory('');
+      setName("");
+      setPrice("");
+      setCategory("");
     }
     setErrors({});
   }, [initialData, open]);
@@ -49,14 +50,14 @@ export default function MenuItemForm({
     const newErrors: { name?: string; price?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = "Name is required";
     }
 
-    const priceNum = parseFloat(price);
-    if (!price || isNaN(priceNum)) {
-      newErrors.price = 'Valid price is required';
+    const priceNum = Number.parseFloat(price);
+    if (!price || Number.isNaN(priceNum)) {
+      newErrors.price = "Valid price is required";
     } else if (priceNum < 0) {
-      newErrors.price = 'Price cannot be negative';
+      newErrors.price = "Price cannot be negative";
     }
 
     setErrors(newErrors);
@@ -66,7 +67,7 @@ export default function MenuItemForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit(name.trim(), parseFloat(price), category.trim());
+      onSubmit(name.trim(), Number.parseFloat(price), category.trim());
     }
   };
 
@@ -74,11 +75,13 @@ export default function MenuItemForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{initialData ? 'Edit Menu Item' : 'Add Menu Item'}</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Edit Menu Item" : "Add Menu Item"}
+          </DialogTitle>
           <DialogDescription>
             {initialData
-              ? 'Update the details of this menu item.'
-              : 'Add a new item to your menu.'}
+              ? "Update the details of this menu item."
+              : "Add a new item to your menu."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -123,11 +126,15 @@ export default function MenuItemForm({
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : initialData ? 'Update' : 'Add Item'}
+              {isLoading ? "Saving..." : initialData ? "Update" : "Add Item"}
             </Button>
           </DialogFooter>
         </form>
